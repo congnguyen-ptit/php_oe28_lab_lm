@@ -13,4 +13,14 @@ class Comment extends Model
         'book_id',
     ];
     public $timestamps = true;
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function book()
+    {
+        return $this->belongsTo(Book::class);
+    }
 }
