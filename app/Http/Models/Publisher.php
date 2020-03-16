@@ -13,4 +13,14 @@ class Publisher extends Model
         'location',
     ];
     public $timestamps = true;
+
+    public function books()
+    {
+        return $this->hasMany(Book::class);
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'books', 'publisher_id', 'user_id');
+    }
 }
