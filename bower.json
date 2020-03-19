@@ -1,0 +1,22 @@
+{
+  "name": "php_oe28_lab_lm",
+  "description": "",
+  "main": "",
+  "authors": [
+    "congnguyen-ptit <congnx1998215@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bower_package": "*",
+    "bower-package": "*"
+  }
+}
