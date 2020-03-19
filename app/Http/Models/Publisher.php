@@ -10,6 +10,7 @@ class Publisher extends Model
     protected $fillable = [
         'code',
         'name',
+        'slug',
         'location',
     ];
     public $timestamps = true;

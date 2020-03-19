@@ -3,13 +3,19 @@
 namespace App\Http\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Auth\Authenticatable as AuthenticableTrait;
+use Illuminate\Notifications\Notifiable;
 
-class User extends Model
+class User extends \Eloquent implements Authenticatable
 {
+    use AuthenticableTrait;
+
     protected $table = 'users';
     protected $fillable = [
         'code',
         'name',
+        'user_slug',
         'email',
         'phone_number',
         'username',
@@ -20,6 +26,7 @@ class User extends Model
         'password',
         'remember_token',
     ];
+
     public $timestamps = true;
 
     public function locations()
