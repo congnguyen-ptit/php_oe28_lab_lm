@@ -21,3 +21,11 @@ Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 Route::group(['prefix' => 'admin', 'middleware' => ['auth' => 'admin']], function() {
     Route::get('/', 'AdminController@index')->name('admin.dashboard');
 });
+
+Route::group(['prefix' => 'books'], function() {
+    Route::get('{book}/details', 'BookController@detail')->name('book.detail');
+});
+
+Route::group(['prefix' => 'users'], function() {
+    Route::get('{user}/details', 'UserController@detail')->name('user.detail');
+});
