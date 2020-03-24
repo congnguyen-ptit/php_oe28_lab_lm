@@ -6,17 +6,17 @@
     "congnguyen-ptit <congnx1998215@gmail.com>"
   ],
   "license": "MIT",
-  "homepage": "",
+  "homepage": "https://github.com/congnguyen-ptit/php_oe28_lab_lm",
   "private": true,
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "public/bower_components/"
   ],
   "dependencies": {
-    "bower_package": "*",
-    "bower-package": "*"
+    "bower_package": "https://github.com/congnguyen-ptit/bower_package.git",
   }
 }
