@@ -8,7 +8,7 @@
                             <div class="navbar-brand">
                                 <h1>
                                     <a href="{{ route('home') }}">
-                                        <img src="bower_components/bower_package/images/libraria-logo-v1.png" alt="LIBRARY" />
+                                        <img src="bower_components/bower_package/images/libraria-logo-v1.png" alt="{{ trans('page.li') }}" />
                                     </a>
                                 </h1>
                             </div>
@@ -19,9 +19,9 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <div class="topbar-info">
-                                        <a href="tel:0916718468"><i class="fa fa-phone"></i>{{ trans('page.0916718468') }}</a>
+                                        <a href="{{ trans('page.tel') }}"><i class="fa fa-phone"></i>{{ trans('page.0916718468') }}</a>
                                         <span>&#47;</span>
-                                        <a href="mailto:support@libraria.com"><i class="fa fa-envelope"></i>{{ trans('page.email') }}</a>
+                                        <a href="{{ trans('page.mt') }}"><i class="fa fa-envelope"></i>{{ trans('page.email') }}</a>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
@@ -70,7 +70,7 @@
                                     <a data-toggle="dropdown" class="dropdown-toggle disabled" href="{{ route('home') }}">{{ trans('page.home') }}</a>
                                 </li>
                                 <li class="dropdown">
-                                    <a data-toggle="dropdown" class="dropdown-toggle disabled" href="#">{{ trans('page.category') }}</a>
+                                    <a data-toggle="dropdown" class="dropdown-toggle disabled" href="{{ route('books.list') }}">{{ trans('page.category') }}</a>
                                     <ul class="dropdown-menu">
                                         @foreach ($categories as $category)
                                             <li >
@@ -121,7 +121,7 @@
                                 </ul>
                             </li>
                             <li>
-                                <a href="news-events-list-view.html">{{ trans('page.newsandevents') }}</a>
+                                <a href="">{{ trans('page.newsandevents') }}</a>
                                 <ul>
                                     <li><a href="#">{{ trans('page.newsandevents') }}</a></li>
                                     <li><a href="#">{{ trans('page.newsandevents') }}</a></li>
@@ -130,8 +130,8 @@
                             <li>
                                 <a href="#">{{ trans('page.blog') }}</a>
                                 <ul>
-                                    <li><a href="blog.html">{{ trans('page.bloggridview') }}</a></li>
-                                    <li><a href="blog-detail.html">{{ trans('page.blogdetail') }}</a></li>
+                                    <li><a href="">{{ trans('page.bloggridview') }}</a></li>
+                                    <li><a href="">{{ trans('page.blogdetail') }}</a></li>
                                 </ul>
                             </li>
                             <li><a href="#">{{ trans('page.services') }}</a></li>

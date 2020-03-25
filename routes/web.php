@@ -23,6 +23,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth' => 'admin']], functio
 });
 
 Route::group(['prefix' => 'books'], function() {
+    Route::get('/', 'BookController@index')->name('books.list');
     Route::get('{book}/details', 'BookController@detail')->name('book.detail');
 });
 
