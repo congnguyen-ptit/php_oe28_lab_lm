@@ -19,7 +19,7 @@ class UserController extends Controller
         try {
             $user = User::where('user_slug', $slug)->firstOrFail();
 
-            return view('user.infor', compact('user'));
+            return view('user.pages.userview', compact('user'));
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }

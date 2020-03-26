@@ -87,5 +87,9 @@ return [
     'li' => 'LIBRARY',
     'atc' => 'Thêm vào giỏ',
     'like' => 'Yêu thích',
-
+    'seeya' => 'Không có kết quả, làm ơn hãy thử tìm kiếm khác!',
+    'result' => 'Kết quả cho tìm kiếm: keyword',
+    'readercomments' => 'Bình luận của bạn đọc',
+    'allca' => 'Tất cả danh mục',
+    'nobook' => 'Người dùng này không có sách!',
 ];

@@ -82,11 +82,17 @@ return [
     'categories' => 'Categories',
     'authors' => 'Authors',
     'publishers' => 'Publishers',
-    'write' => 'write a comment...',
+    'write' => 'write your comment...',
     'post' => 'Post',
     'default' => 'Default sorting',
     'li' => 'LIBRARY',
     'atc' => 'Add TO CART',
     'like' => 'Like',
+    'seeya' => 'There are no results for you, please try again!',
+    'result' => 'There are results for: keyword',
+    'readercomments' => 'Reader Comments',
+    'allca' => 'All categories',
+    'user' => 'User',
+    'nobook' => 'This user does not have any books',
 
 ];

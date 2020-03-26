@@ -28,8 +28,7 @@
                             <div class="container">
                                 <div class="filter-box">
                                     <h3>{{ trans('page.search') }}</h3>
-                                    <form action="#" method="get">
-                                        @csrf
+                                    <form action="{{ route('book.search') }}" method="GET">
                                         <div class="col-md-5 col-sm-6">
                                             <div class="form-group">
                                                 <label class="sr-only" for="keywords">{{ trans('page.keyword') }}</label>
@@ -58,64 +57,70 @@
                     </div>
                     <div class="row">
                         <div class="col-md-9 col-md-push-3">
-                            <div class="books-gird">
-                                <ul>
-                                    @foreach ($books as $book)
-                                        <li>
-                                            <figure>
-                                                <img src="{{ $book->image }}" alt="{{ trans('page.book') }}">
-                                                <figcaption>
-                                                    <p><strong>{{ $book->name }}</strong></p>
-                                                    <p><strong>{{ trans('page.author') }}&#58;</strong> {{ $book->user->name }}</p>
-                                                </figcaption>
-                                            </figure>
-                                            <div class="single-book-box">
-                                                <div class="post-detail">
-                                                    <div class="books-social-sharing">
-                                                        <ul>
-                                                            <li><a href="#" target="_blank"><i class="fa fa-facebook"></i></a></li>
-                                                            <li><a href="#" target="_blank"><i class="fa fa-google-plus"></i></a></li>
-                                                            <li><a href="#" target="_blank"><i class="fa fa-rss"></i></a></li>
-                                                        </ul>
+                            @if ($books->count() > 0)
+                                <div class="books-gird">
+                                    <ul>
+                                        @foreach ($books as $book)
+                                            <li>
+                                                <figure>
+                                                    <img src="{{ $book->image }}" alt="{{ trans('page.book') }}">
+                                                    <figcaption>
+                                                        <p><strong>{{ $book->name }}</strong></p>
+                                                        <p><strong>{{ trans('page.author') }}&#58;</strong> {{ $book->user->name }}</p>
+                                                    </figcaption>
+                                                </figure>
+                                                <div class="single-book-box">
+                                                    <div class="post-detail">
+                                                        <div class="books-social-sharing">
+                                                            <ul>
+                                                                <li><a href="#" target="_blank"><i class="fa fa-facebook"></i></a></li>
+                                                                <li><a href="#" target="_blank"><i class="fa fa-google-plus"></i></a></li>
+                                                                <li><a href="#" target="_blank"><i class="fa fa-rss"></i></a></li>
+                                                            </ul>
+                                                        </div>
+                                                        <div class="optional-links">
+                                                            <ul>
+                                                                <li>
+                                                                    <a href="#" target="_blank" data-toggle="blog-tags" data-placement="top" title="{{ trans('page.atc') }}">
+                                                                        <i class="fa fa-shopping-cart"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="#" target="_blank" data-toggle="blog-tags" data-placement="top" title="{{ trans('page.like') }}">
+                                                                        <i class="fa fa-heart"></i>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        <header class="entry-header">
+                                                            <h3 class="entry-title">
+                                                                <a href="{{ route('book.detail', $book->slug) }}">{{ $book->name }}</a>
+                                                            </h3>
+                                                            <ul>
+                                                                <li><strong>{{ trans('page.author') }}&#58;</strong>
+                                                                    <a href="{{ route('user.detail', $book->user->user_slug) }}"> {{ $book->user->name }}</a>
+                                                                </li>
+                                                                <li><strong>{{ trans('page.code') }}&#58;</strong> {{ $book->code }}</li>
+                                                            </ul>
+                                                        </header>
+                                                        <div class="entry-content">
+                                                            <p>{{ trans('page.sd') }}</p>
+                                                        </div>
+                                                        <footer class="entry-footer">
+                                                            <a class="btn btn-primary" href="{{ route('book.detail', $book->slug) }}">{{ trans('page.readmore') }}</a>
+                                                        </footer>
                                                     </div>
-                                                    <div class="optional-links">
-                                                        <ul>
-                                                            <li>
-                                                                <a href="#" target="_blank" data-toggle="blog-tags" data-placement="top" title="{{ trans('page.atc') }}">
-                                                                    <i class="fa fa-shopping-cart"></i>
-                                                                </a>
-                                                            </li>
-                                                            <li>
-                                                                <a href="#" target="_blank" data-toggle="blog-tags" data-placement="top" title="{{ trans('page.like') }}">
-                                                                    <i class="fa fa-heart"></i>
-                                                                </a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                    <header class="entry-header">
-                                                        <h3 class="entry-title">
-                                                            <a href="{{ route('book.detail', $book->slug) }}">{{ $book->name }}</a>
-                                                        </h3>
-                                                        <ul>
-                                                            <li><strong>{{ trans('page.author') }}&#58;</strong>
-                                                                <a href="#"> {{ $book->user->name }}</a>
-                                                            </li>
-                                                            <li><strong>{{ trans('page.code') }}&#58;</strong> {{ $book->code }}</li>
-                                                        </ul>
-                                                    </header>
-                                                    <div class="entry-content">
-                                                        <p>{{ trans('page.sd') }}</p>
-                                                    </div>
-                                                    <footer class="entry-footer">
-                                                        <a class="btn btn-primary" href="{{ route('book.detail', $book->slug) }}">{{ trans('page.readmore') }}</a>
-                                                    </footer>
                                                 </div>
-                                            </div>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                            {{ $books->links() }}
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                                {{ $books->links() }}
+                            @else
+                               <div class="container">
+                                   <h3>{{ trans('page.seeya') }}</h3>
+                               </div>
+                            @endif
                         </div>
                         <div class="col-md-3 col-md-pull-9">
                             <aside id="secondary" class="sidebar widget-area" data-accordion-group>
@@ -128,7 +133,7 @@
                                                 <ul>
                                                     @foreach ($child_categories as $child_category)
                                                         <li>
-                                                            <a href="#">{{ $child_category->name }}
+                                                            <a href="{{ route('book.category', $child_category->slug) }}">{{ $child_category->name }}
                                                                 <span>&#40;{{ $child_category->books->count() }}&#41;</span>
                                                             </a>
                                                         </li>
@@ -142,7 +147,7 @@
                                                 <ul>
                                                     @foreach ($authors as $author)
                                                         <li>
-                                                            <a href="{{ route('user.detail', $author->user_slug) }}">{{ $author->name }}
+                                                            <a href="{{ route('book.author', $author->user_slug) }}">{{ $author->name }}
                                                                 <span>&#40;{{ $author->books->count() }}&#41;</span>
                                                             </a>
                                                         </li>
@@ -157,7 +162,7 @@
                                                 <ul>
                                                     @foreach ($publishers as $publisher)
                                                         <li>
-                                                            <a href="#">{{ $publisher->name }}
+                                                            <a href="{{ route('book.publisher', $publisher->slug) }}">{{ $publisher->name }}
                                                                 <span>&#40;{{ $publisher->books->count() }}&#41;</span>
                                                             </a>
                                                         </li>
