@@ -39,6 +39,11 @@ class User extends \Eloquent implements Authenticatable
         return $this->hasMany(Book::class);
     }
 
+    public function favoriteBooks()
+    {
+        return $this->belongsToMany(Book::class, 'favorite_books', 'user_id', 'book_id');
+    }
+
     public function role()
     {
         return $this->belongsTo(Role::class);
@@ -54,12 +59,7 @@ class User extends \Eloquent implements Authenticatable
         return $this->hasMany(Rate::class);
     }
 
-    public function favorite_books()
-    {
-        return $this->hasMany(FavoriteBook::class);
-    }
-
-    public function borrower_records()
+    public function borrowerRecords()
     {
         return $this->hasMany(BorrowerRecord::class);
     }

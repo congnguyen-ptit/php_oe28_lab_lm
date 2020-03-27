@@ -28,8 +28,7 @@
                             <div class="container">
                                 <div class="filter-box">
                                     <h3>{{ trans('page.search') }}</h3>
-                                    <form action="#" method="get">
-                                        @csrf
+                                    <form action="{{ route('book.search') }}" method="GET">
                                         <div class="col-md-5 col-sm-6">
                                             <div class="form-group">
                                                 <label class="sr-only" for="keywords">{{ trans('page.keyword') }}</label>
@@ -85,10 +84,6 @@
                                                         <i class="fa fa-heart"></i>
                                                     </a>
                                                 </li>
-                                                <li>
-                                                    <a href="#" target="_blank" data-toggle="blog-tags" data-placement="top" title="Mail"><i class="fa fa-envelope"></i>
-                                                    </a>
-                                                </li>
                                             </ul>
                                         </div>
                                         <header class="entry-header">
@@ -134,41 +129,51 @@
                                     </ul>
                                     <div class="tab-content">
                                         <div id="sectionA" class="tab-pane fade in active">
-                                             <div class="comment-wrapper">
-                                                <div class="panel panel-info">
-                                                    <div class="panel-heading">
-                                                        {{ trans('page.comment') }}
-                                                    </div>
-                                                    <div class="panel-body">
-                                                        <hr>
-                                                        <ul class="media-list">
-                                                            @foreach ($book->comments as $comment)
-                                                                <li class="media">
-                                                                    <a href="{{ route('user.detail', $book->user->user_slug) }}" class="pull-left">
-                                                                        <img src="images/smurf.png" alt="" class="img-circle">
-                                                                    </a>
-                                                                    <div class="media-body">
-                                                                        <span class="text-muted pull-right">
-                                                                            <small class="text-muted">{{ $comment->created_at }}</small>
-                                                                        </span>
-                                                                        <a href="{{ route('user.detail', $book->user->user_slug) }}">
-                                                                            <strong class="text-success">{{ $comment->user->username }}</strong>
-                                                                        </a>
-                                                                        <p>
-                                                                            {{ $comment->content }}
-                                                                        </p>
+                                            <div class="comments-area" id="comments">
+                                                <div class="comment-bg">
+                                                    <h4 class="comments-title">{{ trans('page.readercomments') }}</h4>
+                                                    <span class="underline left"></span>
+                                                    @foreach ($book->comments as $comment)
+                                                        <ol class="comment-list">
+                                                            <li class="comment even thread-even depth-1 parent">
+                                                                <div class="comment-body">
+                                                                    <div class="comment-author vcard">
+                                                                        <b class="fn">
+                                                                            <a class="url" rel="external nofollow" href="{{ route('user.detail', $comment->user->user_slug) }}">{{ $comment->user->name }}</a>
+                                                                        </b>
                                                                     </div>
-                                                                </li>
-                                                            @endforeach
-                                                        </ul>
+                                                                    <footer class="comment-meta">
+                                                                        <div class="left-arrow"></div>
+                                                                        <div class="comment-metadata">
+                                                                            <time>
+                                                                                <b> {{ $comment->created_at }} </b>
+                                                                            </time>
+                                                                        </div>
+                                                                        <div class="comment-content">
+                                                                            <p>{{ $comment->content }}
+                                                                            </p>
+                                                                        </div>
+                                                                    </footer>
+                                                                </div>
+                                                            </li>
+                                                        </ol>
+                                                    @endforeach
+                                                </div>
+                                                <div class="comment-respond" id="respond">
+                                                    <h4 class="comment-reply-title" id="reply-title">{{ trans('page.write') }}</h4>
+                                                    <span class="underline left"></span>
+                                                    <form class="comment-form" id="commentform" method="POST" action="{{ route('comments', $book->id) }}">
+                                                        @csrf
+                                                        <div class="row">
+                                                            <p class="comment-form-comment">
+                                                                <textarea name="comment" id="comment" placeholder="{{ trans('page.write') }}"></textarea>
+                                                            </p>
+                                                        </div>
                                                         <div class="clearfix"></div>
-                                                        <form method="POST" action="#">
-                                                            @csrf
-                                                            <textarea class="form-control" placeholder="{{ trans('page.write') }}" rows="3"></textarea>
-                                                            <br>
-                                                            <button type="submit" name="comment" class="btn btn-info pull-right">{{ trans('page.post') }}</button>
-                                                        </form>
-                                                    </div>
+                                                        <p class="form-submit">
+                                                            <input value="{{ trans('page.post') }}" class="submit" id="submit" name="submit" type="submit">
+                                                        </p>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>
@@ -196,7 +201,7 @@
                                                 <ul>
                                                     @foreach ($child_categories as $child_category)
                                                         <li>
-                                                            <a href="#">{{ $child_category->name }}
+                                                            <a href="{{ route('book.category', $child_category->slug) }}">{{ $child_category->name }}
                                                                 <span>&#40;{{ $child_category->books->count() }}&#41;</span>
                                                             </a>
                                                         </li>
@@ -210,7 +215,7 @@
                                                 <ul>
                                                     @foreach ($authors as $author)
                                                         <li>
-                                                            <a href="{{ route('user.detail', $author->user_slug) }}">{{ $author->name }}
+                                                            <a href="{{ route('book.author', $author->user_slug) }}">{{ $author->name }}
                                                                 <span>&#40;{{ $author->books->count() }}&#41;</span>
                                                             </a>
                                                         </li>
@@ -225,7 +230,7 @@
                                                 <ul>
                                                     @foreach ($publishers as $publisher)
                                                         <li>
-                                                            <a href="#">{{ $publisher->name }}
+                                                            <a href="{{ route('book.publisher', $publisher->slug) }}">{{ $publisher->name }}
                                                                 <span>&#40;{{ $publisher->books->count() }}&#41;</span>
                                                             </a>
                                                         </li>

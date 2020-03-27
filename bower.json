@@ -17,6 +17,6 @@
     "public/bower_components/"
   ],
   "dependencies": {
-    "bower_package": "https://github.com/congnguyen-ptit/bower_package.git",
+    "bower_package": "https://github.com/congnguyen-ptit/bower_package.git"
   }
 }

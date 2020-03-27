@@ -25,8 +25,16 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth' => 'admin']], functio
 Route::group(['prefix' => 'books'], function() {
     Route::get('/', 'BookController@index')->name('books.list');
     Route::get('{book}/details', 'BookController@detail')->name('book.detail');
+    Route::get('/categories/{category}', 'BookController@showByCategory')->name('book.category');
+    Route::get('/publishers/{publisher}', 'BookController@showByPublisher')->name('book.publisher');
+    Route::get('/authors/{author}', 'BookController@showByAuthor')->name('book.author');
+    Route::get('/search', 'BookController@searchByCategory')->name('book.search');
+    Route::get('{category}', 'BookController@getChildrenCategories')->name('book.allcategories');
 });
 
 Route::group(['prefix' => 'users'], function() {
     Route::get('{user}/details', 'UserController@detail')->name('user.detail');
 });
+
+Route::post('/comments/{book}', 'CommentController@store')->name('comments');
+
