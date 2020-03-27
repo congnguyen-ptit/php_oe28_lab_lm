@@ -37,26 +37,18 @@
                                                     <form class="login" method="POST" action="{{ route('login') }}">
                                                         @csrf
                                                         @if ($errors->any())
-                                                        <p class="lead">{{ trans('auth.wrong') }}</p>
+                                                        <p class="lead">{{ trans('auth.failed') }}</p>
                                                         @endif
                                                         <p class="form-row form-row-first input-required">
-                                                            <label>
-                                                                <span class="first-letter">{{ trans('page.username') }}</span>
-                                                                <span class="second-letter">&#42;</span>
-                                                            </label>
-                                                            <input type="text"  id="username" name="username" class="input-text">
+                                                            <input type="text"  id="username" name="username" class="input-text" placeholder="{{ trans('page.username') }}&#42;">
                                                          </p>
                                                         <p class="form-row form-row-last input-required">
-                                                            <label>
-                                                                <span class="first-letter">{{ trans('page.password') }}</span>
-                                                                <span class="second-letter">&#42;</span>
-                                                            </label>
-                                                            <input type="password" id="password" name="password" class="input-text">
+                                                            <input type="password" id="password" name="password" class="input-text" placeholder="{{ trans('page.password') }}&#42;">
                                                         </p>
                                                         <div class="clear"></div>
                                                         <div class="password-form-row">
                                                             <p class="form-row input-checkbox">
-                                                                <input type="checkbox" value="forever" id="rememberme" name="rememberme">
+                                                                <input type="checkbox" value="forever" id="rememberme" name="remember">
                                                                 <label class="inline" for="rememberme">{{ trans('page.remember') }}</label>
                                                             </p>
                                                             <p class="lost_password">
@@ -79,70 +71,92 @@
                                                         <span class="underline left"></span>
                                                         <p></p>
                                                     </div>
-                                                    <form class="login" method="POST">
+                                                    <form class="login" method="POST" action="{{ route('register') }}">
                                                         @csrf
                                                         <p class="form-row form-row-first input-required">
-                                                            <label>
-                                                                <span class="first-letter">{{ trans('page.username') }}</span>
-                                                                <span class="second-letter">&#42;</span>
-                                                            </label>
-                                                            <input type="text" id="username1" name="username" class="input-text">
+                                                            <input type="text" id="username1" name="name" class="input-text" value="{{ old('name') }}" placeholder="{{ trans('page.name') }}&#42;">
+                                                            @error('name')
+                                                                <span class="invalid-feedback" role="alert">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
+                                                        </p>
+                                                        <p class="form-row form-row-first input-required">
+                                                            <input type="text" id="username1" name="username" class="input-text" value="{{ old('username') }}" placeholder="{{ trans('page.username') }}&#42;">
+                                                            @error('username')
+                                                                <span class="invalid-feedback" role="alert">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
                                                         </p>
                                                         <p class="form-row input-required">
-                                                            <label>
-                                                                <span class="first-letter">{{ trans('page.password') }}</span>
-                                                                <span class="second-letter">&#42;</span>
-                                                            </label>
-                                                            <input type="password" id="password1" name="password" class="input-text">
+                                                            <input type="password" id="password1" name="password" class="input-text"
+                                                            required autocomplete="new-password" placeholder="{{ trans('page.password') }}&#42;">
+                                                            @error('password')
+                                                                <span class="invalid-feedback" role="alert">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
+                                                        </p>
+                                                        <p class="form-row input-required">
+                                                            <input type="password" id="password1" name="password_confirmation" class="input-text" required autocomplete="new-password" placeholder="{{ trans('page.passwordconfirmed') }}&#42;">
                                                         </p>
                                                         <p class="form-row form-row-first input-required">
-                                                            <label>
-                                                                <span class="first-letter">{{ trans('page.mail') }}</span>
-                                                                <span class="second-letter">&#42;</span>
-                                                            </label>
-                                                            <input type="text" id="username1" name="username" class="input-text">
+                                                            <input type="text" id="username1" name="email" class="input-text" value="{{ old('email') }}" placeholder="{{ trans('page.mail') }}&#42;">
+                                                            @error('email')
+                                                                <span class="invalid-feedback" role="alert">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
                                                         </p>
                                                         <p class="form-row form-row-first input-required">
-                                                            <label>
-                                                                <span class="first-letter">{{ trans('page.phonenumber') }}</span>
-                                                                <span class="second-letter">&#42;</span>
-                                                            </label>
-                                                            <input type="text" id="username1" name="username" class="input-text">
+                                                            <input type="text" id="username1" name="phone_number" class="input-text"
+                                                            value="{{ old('phone_number') }}" placeholder="{{ trans('page.phonenumber') }}&#42;">
+                                                            @error('phone_number')
+                                                                <span class="invalid-feedback" role="alert">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
                                                         </p>
                                                         <p class="form-row form-row-first input-required">
-                                                            <label>
-                                                                <span class="first-letter">{{ trans('page.apartment_number') }}</span>
-                                                                <span class="second-letter">&#42;</span>
-                                                            </label>
-                                                            <input type="text" id="username1" name="username" class="input-text">
+                                                            <input type="text" id="username1" name="apartment_number" class="input-text" value="{{ old('aparment_number') }}" placeholder="{{ trans('page.apartment_number') }}&#42;">
+                                                            @error('apartment_number')
+                                                                <span class="invalid-feedback" role="alert">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
                                                         </p>
                                                         <p class="form-row form-row-first input-required">
-                                                            <label>
-                                                                <span class="first-letter">{{ trans('page.street') }}</span>
-                                                                <span class="second-letter">&#42;</span>
-                                                            </label>
-                                                            <input type="text" id="username1" name="username" class="input-text">
+                                                            <input type="text" id="username1" name="street" class="input-text" value="{{ old('street') }}" placeholder="{{ trans('page.street') }}&#42;">
+                                                            @error('street')
+                                                                <span class="invalid-feedback" role="alert">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
                                                         </p>
                                                         <p class="form-row form-row-first input-required">
-                                                            <label>
-                                                                <span class="first-letter">{{ trans('page.ward') }}</span>
-                                                                <span class="second-letter">&#42;</span>
-                                                            </label>
-                                                            <input type="text" id="username1" name="username" class="input-text">
+                                                            <input type="text" id="username1" name="ward" class="input-text" value="{{ old('ward') }}" placeholder="{{ trans('page.ward') }}&#42;">
+                                                            @error('ward')
+                                                                <span class="invalid-feedback" role="alert">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
                                                         </p>
                                                         <p class="form-row form-row-first input-required">
-                                                            <label>
-                                                                <span class="first-letter">{{ trans('page.district') }}</span>
-                                                                <span class="second-letter">&#42;</span>
-                                                            </label>
-                                                            <input type="text" id="username1" name="username" class="input-text">
+                                                            <input type="text" id="username1" name="district" class="input-text" value="{{ old('district') }}" placeholder="{{ trans('page.district') }}&#42;">
+                                                            @error('district')
+                                                                <span class="invalid-feedback" role="alert">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
                                                         </p>
                                                         <p class="form-row form-row-first input-required">
-                                                            <label>
-                                                                <span class="first-letter">{{ trans('page.city') }}</span>
-                                                                <span class="second-letter">&#42;</span>
-                                                            </label>
-                                                            <input type="text" id="username1" name="username" class="input-text">
+                                                            <input type="text" id="username1" name="city" class="input-text" value="{{ old('city') }}" placeholder="{{ trans('page.city') }}&#42;">
+                                                            @error('city')
+                                                                <span class="invalid-feedback" role="alert">
+                                                                    <strong>{{ $message }}</strong>
+                                                                </span>
+                                                            @enderror
                                                         </p>
                                                         <div class="clear"></div>
                                                         <input type="submit" value="Signup" name="signup" class="button btn btn-default">

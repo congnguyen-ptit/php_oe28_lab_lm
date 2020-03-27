@@ -92,4 +92,9 @@ return [
     'readercomments' => 'Bình luận của bạn đọc',
     'allca' => 'Tất cả danh mục',
     'nobook' => 'Người dùng này không có sách!',
+    'name' => 'Đầy đủ họ tên',
+    'passwordconfirmed' => 'Nhập lại mật khẩu',
+    'success' => 'Đã thêm sách',
+    'exist' => 'Sách đã được thêm',
+    'rm' => 'Đã loại',
 ];

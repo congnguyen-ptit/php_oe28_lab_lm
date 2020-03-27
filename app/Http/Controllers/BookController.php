@@ -21,13 +21,30 @@ class BookController extends Controller
     public function detail($slug)
     {
         try {
+            $liked = false;
             $book = Book::where('slug', $slug)->firstOrFail();
+            $added = false;
+            $item = session()->has('item') ? session()->get('item') : null;
+            if (isset($item[$book->id])) {
+                $added = true;
+            }
+            if (Auth::check()) {
+                $isLiked = $book->likedUsers()->wherePivot('user_id', Auth::id())->exists();
+                if ($isLiked) {
+                    $liked = true;
+                }
+            } else {
+                $liked = false;
+            }
 
-            return view('user.pages.booksdetail', compact('book'));
+            return view('user.pages.booksdetail')->with([
+                'book' => $book,
+                'liked' => $liked,
+                'added' => $added,
+            ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
-
     }
 
     public function showByCategory($slug)
@@ -72,7 +89,7 @@ class BookController extends Controller
         $category = $request->category;
         if (empty($keywords)) {
             if ($category === 'all') {
-                return redirect()->route('books.list');
+                return redirect()->route('book.list');
             } else {
                 return redirect()->route('book.category', $category);
             }
@@ -109,5 +126,21 @@ class BookController extends Controller
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
+    }
+
+    public function likeBook($id)
+    {
+        $book = Book::find($id);
+        $book->likedUsers()->attach(Auth::id());
+
+        return redirect()->route('book.detail', $book->slug);
+    }
+
+    public function unlikeBook($id)
+    {
+        $book = Book::find($id);
+        $book->likedUsers()->detach(Auth::id());
+
+        return redirect()->route('book.detail', $book->slug);
     }
 }

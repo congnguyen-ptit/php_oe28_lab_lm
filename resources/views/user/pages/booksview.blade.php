@@ -65,7 +65,11 @@
                                                 <figure>
                                                     <img src="{{ $book->image }}" alt="{{ trans('page.book') }}">
                                                     <figcaption>
-                                                        <p><strong>{{ $book->name }}</strong></p>
+                                                        <p><strong>{{ $book->name }}
+                                                            @if ($book->quantity == config('const.empty'))
+                                                                <label id="out"> &#40;{{ trans('page.out') }} &#41;</label>
+                                                            @endif
+                                                        </strong></p>
                                                         <p><strong>{{ trans('page.author') }}&#58;</strong> {{ $book->user->name }}</p>
                                                     </figcaption>
                                                 </figure>
@@ -78,20 +82,17 @@
                                                                 <li><a href="#" target="_blank"><i class="fa fa-rss"></i></a></li>
                                                             </ul>
                                                         </div>
-                                                        <div class="optional-links">
-                                                            <ul>
-                                                                <li>
-                                                                    <a href="#" target="_blank" data-toggle="blog-tags" data-placement="top" title="{{ trans('page.atc') }}">
-                                                                        <i class="fa fa-shopping-cart"></i>
-                                                                    </a>
-                                                                </li>
-                                                                <li>
-                                                                    <a href="#" target="_blank" data-toggle="blog-tags" data-placement="top" title="{{ trans('page.like') }}">
-                                                                        <i class="fa fa-heart"></i>
-                                                                    </a>
-                                                                </li>
-                                                            </ul>
-                                                        </div>
+                                                        @if ($book->quantity != config('const.empty'))
+                                                            <div class="optional-links">
+                                                                <ul>
+                                                                    <li>
+                                                                        <a href="{{ route('bookbag.add', $book->id) }}" target="_blank" data-toggle="blog-tags" data-placement="top" title="{{ trans('page.atc') }}">
+                                                                            <i class="fa fa-plus" aria-hidden="true"></i>
+                                                                        </a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        @endif
                                                         <header class="entry-header">
                                                             <h3 class="entry-title">
                                                                 <a href="{{ route('book.detail', $book->slug) }}">{{ $book->name }}</a>
