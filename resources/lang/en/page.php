@@ -94,5 +94,6 @@ return [
     'allca' => 'All categories',
     'user' => 'User',
     'nobook' => 'This user does not have any books',
-
+    'name' => 'Fullname',
+    'passwordconfirmed' => 'Confirm Password',
 ];

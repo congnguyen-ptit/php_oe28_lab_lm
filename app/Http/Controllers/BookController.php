@@ -21,13 +21,24 @@ class BookController extends Controller
     public function detail($slug)
     {
         try {
+            $liked = false;
             $book = Book::where('slug', $slug)->firstOrFail();
+            if (Auth::check()) {
+                $isLiked = $book->likedUsers()->where('user_id', Auth::id())->exists();
+                if ($isLiked) {
+                    $liked = true;
+                }
+            } else {
+                $liked = false;
+            }
 
-            return view('user.pages.booksdetail', compact('book'));
+            return view('user.pages.booksdetail')->with([
+                'book' => $book,
+                'liked' => $liked,
+            ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
-
     }
 
     public function showByCategory($slug)
@@ -109,5 +120,21 @@ class BookController extends Controller
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
+    }
+
+    public function likeBook($id)
+    {
+        $book = Book::find($id);
+        $book->likedUsers()->attach(Auth::id());
+
+        return redirect()->route('book.detail', $book->slug);
+    }
+
+    public function unlikeBook($id)
+    {
+        $book = Book::find($id);
+        $book->likedUsers()->detach(Auth::id());
+
+        return redirect()->route('book.detail', $book->slug);
     }
 }

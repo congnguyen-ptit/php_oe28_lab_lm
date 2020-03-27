@@ -28,8 +28,7 @@
         <div class="container">
             <div class="filter-box">
                 <h3>{{ trans('page.search') }}</h3>
-                <form action="#" method="get">
-                    @csrf
+                <form action="{{ route('book.search') }}" method="GET">
                     <div class="col-md-5 col-sm-6">
                         <div class="form-group">
                             <label class="sr-only" for="keywords">{{ trans('page.keyword') }}</label>
@@ -41,14 +40,14 @@
                             <select name="category" id="category" class="form-control">
                                 <option value="all">{{ trans('page.All') }}</option>
                                 @foreach ($child_categories as $child_category)
-                                <option value="{{ $child_category->slug }}">{{ $child_category->name }}</option>
+                                    <option value="{{ $child_category->slug }}">{{ $child_category->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
                     <div class="col-md-2 col-sm-6">
                         <div class="form-group">
-                            <input class="form-control" type="submit" value="Search">
+                            <input class="form-control" type="submit" value="{{ trans('page.s') }}">
                         </div>
                     </div>
                 </form>
