@@ -80,9 +80,16 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="#" target="_blank" data-toggle="blog-tags" data-placement="top" title="Like">
-                                                        <i class="fa fa-heart"></i>
-                                                    </a>
+                                                    {{ $liked ?? '' }}
+                                                    @if (!$liked)
+                                                        <a href="{{ route('book.like', $book->id) }}" target="_blank" data-toggle="blog-tags" data-placement="top" title="Like">
+                                                            <i class="fa fa-heart"></i>
+                                                        </a>
+                                                    @else
+                                                        <a href="{{ route('book.unlike', $book->id) }}" target="_blank" data-toggle="blog-tags" data-placement="top" title="Like">
+                                                            <i class="fa2 fa-heart"></i>
+                                                        </a>
+                                                    @endif
                                                 </li>
                                             </ul>
                                         </div>
@@ -133,31 +140,30 @@
                                                 <div class="comment-bg">
                                                     <h4 class="comments-title">{{ trans('page.readercomments') }}</h4>
                                                     <span class="underline left"></span>
-                                                    @foreach ($book->comments as $comment)
-                                                        <ol class="comment-list">
-                                                            <li class="comment even thread-even depth-1 parent">
+                                                    <ol class="comment-list">
+                                                        <li class="comment even thread-even depth-1 parent">
+                                                            @foreach ($book->comments as $comment)
                                                                 <div class="comment-body">
                                                                     <div class="comment-author vcard">
-                                                                        <b class="fn">
-                                                                            <a class="url" rel="external nofollow" href="{{ route('user.detail', $comment->user->user_slug) }}">{{ $comment->user->name }}</a>
-                                                                        </b>
+                                                                        <img class="avatar avatar-32 photo avatar-default" src="images/smurf.png">
                                                                     </div>
                                                                     <footer class="comment-meta">
-                                                                        <div class="left-arrow"></div>
                                                                         <div class="comment-metadata">
+                                                                            <b class="fn">
+                                                                                <a class="url" rel="external nofollow" href="{{ route('user.detail', $comment->user->user_slug) }}">{{ $comment->user->username }}</a>
+                                                                            </b>
                                                                             <time>
-                                                                                <b> {{ $comment->created_at }} </b>
+                                                                                <b> &#40;{{ $comment->created_at }} &#41;</b>
                                                                             </time>
                                                                         </div>
                                                                         <div class="comment-content">
-                                                                            <p>{{ $comment->content }}
-                                                                            </p>
+                                                                            <p>{{ $comment->content }}</p>
                                                                         </div>
                                                                     </footer>
                                                                 </div>
-                                                            </li>
-                                                        </ol>
-                                                    @endforeach
+                                                             @endforeach
+                                                        </li>
+                                                    </ol>
                                                 </div>
                                                 <div class="comment-respond" id="respond">
                                                     <h4 class="comment-reply-title" id="reply-title">{{ trans('page.write') }}</h4>

@@ -62,14 +62,19 @@
                                                     <ul>
                                                         <li><i class="fa fa-book" aria-hidden="true"></i> {{ $user->books->count() }}</li>
                                                         <li><i class="fa fa-users" aria-hidden="true"></i> {{ $user->followed->count() }}</li>
-                                                        <li><i class="fa fa-user-o" aria-hidden="true"></i> {{ $user->following->count() }}</li>
+                                                        <li><i class="fa fa-binoculars" aria-hidden="true"></i> {{ $user->following->count() }}</li>
                                                     </ul>
                                                 </div>
                                                 <div class="social-media">
                                                     <ul>
+                                                        {{ $follow ?? '' }}
+                                                        @if (!$follow)
+                                                            <li><a href="{{ route('user.follow', $user->id) }}"><i class="fa fa-user-plus" aria-hidden="true"></i></a></li>
+                                                        @else
+                                                            <li><a href="{{ route('user.unfollow', $user->id) }}"><i class="fa fa-minus-square" aria-hidden="true"></i></a></li>
+                                                        @endif
                                                         <li><a href="#." target="_blank"><i class="fa fa-facebook"></i></a></li>
                                                         <li><a href="#." target="_blank"><i class="fa fa-google-plus"></i></a></li>
-                                                        <li><a href="#." target="_blank"><i class="fa fa-rss"></i></a></li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -127,13 +132,13 @@
                                                                                     <div class="comment-author vcard">
                                                                                         <b class="fn">
                                                                                             <img src="{{ $book->image }}">
-                                                                                            <a class="url" rel="external nofollow" href="#">{{ $book->name }}</a>
+                                                                                            <a class="url" rel="external nofollow" href="{{ route('book.detail', $book->slug) }}">{{ $book->name }}</a>
                                                                                         </b>
                                                                                     </div>
                                                                                     <footer class="comment-meta">
                                                                                         <div class="left-arrow"></div>
                                                                                         <div class="comment-metadata">
-                                                                                            <b> {{ $book->category->name }}&#58; {{ $book->name }}</b>
+                                                                                            <b> {{ $book->category->name }}&#58; <a href="{{ route('book.detail', $book->slug) }}">{{ $book->name }}</a></b>
                                                                                         </div>
                                                                                         <div class="comment-content">
                                                                                             <p>{{ $book->content }}
