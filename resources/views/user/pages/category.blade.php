@@ -13,14 +13,12 @@
                 </div>
                 <div class="breadcrumb">
                     <ul>
-                        <li><a href="index-2.html">{{ trans('page.home') }}</a></li>
+                        <li><a href="{{ route('home') }}">{{ trans('page.home') }}</a></li>
                         <li>{{ trans('page.categories') }}</li>
                     </ul>
                 </div>
             </div>
         </section>
-
-        <!-- Start: Services Section -->
         <div id="content" class="site-content">
             <div id="primary" class="content-area">
                 <main id="main" class="site-main">
@@ -69,5 +67,4 @@
                 </main>
             </div>
         </div>
-        <!-- End: Services Section -->
 @endsection

@@ -30,35 +30,40 @@
                                             <a href="{{ route('login') }}"><i class="fa fa-lock"></i>{{ trans('page.loginandregister') }}</a>
                                             <span>&#124;</span>
                                         @else
-                                            <a href="#"><i class="fa fa-lock"></i>{{ Auth::user()->name }}</a>
+                                            <a href="{{ route('user.account', Auth::id()) }}"><i class="fa fa-lock"></i>{{ Auth::user()->name }}</a>
                                             <span>&#47;</span>
                                             <a href="{{ route('logout') }}">{{ trans('page.logout') }}
                                             </a>
                                         @endguest
                                         <div class="header-cart dropdown">
-                                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                                                <i class="fa fa-shopping-cart"></i>
-                                                <small>{{ trans('page.0') }}</small>
-                                            </a>
-                                            <div class="dropdown-menu cart-dropdown">
-                                                <ul>
-                                                    <li class="clearfix">
-                                                        <img src="bower_components/bower_package/images/header-cart-image-01.jpg" alt="cart item" />
-                                                        <div class="item-info">
-                                                            <div class="name">
-                                                                <a href="#">{{ trans('page.gastby') }}</a>
+                                            @if(session('item'))
+                                                <a data-toggle="dropdown" class="dropdown-toggle" href="{{ route('bookbag.index') }}">
+                                                    <a href="{{ route('bookbag.index') }}"><i class="fa fa-shopping-cart"></i></a>
+                                                    <small>{{ count(session('item')) }}</small>
+                                                </a>
+                                                <div class="dropdown-menu cart-dropdown">
+                                                    <ul>
+                                                        @foreach (session('item') as $id=>$item)
+                                                        <li class="clearfix">
+                                                            <img src="{{ $item['img'] }}"/>
+                                                            <div class="item-info">
+                                                                <div class="name">
+                                                                    <a href="{{ route('book.detail',$item['slug']) }}">{{ $item['name'] }}</a>
+                                                                </div>
+                                                                <div class="author">
+                                                                    <strong>{{ trans('page.author') }}&#58;</strong>{{ $item['author'] }}
+                                                                </div>
                                                             </div>
-                                                            <div class="author"><strong>{{ trans('page.author') }}&#58;</strong> </div>
-                                                            <div class="price">1</div>
-                                                        </div>
-                                                        <a class="remove" href="#"><i class="fa fa-trash-o"></i></a>
-                                                    </li>
-                                                </ul>
-                                                <div class="cart-buttons">
-                                                    <a href="#" class="btn btn-dark-gray">{{ trans('page.viewcart') }}</a>
-                                                    <a href="#" class="btn btn-primary">{{ trans('page.checkout') }}</a>
+                                                            <a class="remove" href="{{ route('bookbag.remove', $item['id']) }}"><i class="fa fa-trash-o"></i></a>
+                                                        </li>
+                                                        @endforeach
+                                                    </ul>
+                                                    <div class="cart-buttons">
+                                                        <a href="{{ route('bookbag.index') }}" class="btn btn-dark-gray">{{ trans('page.viewcart') }}</a>
+                                                        <a href="#" class="btn btn-primary">{{ trans('page.checkout') }}</a>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
@@ -70,7 +75,7 @@
                                     <a data-toggle="dropdown" class="dropdown-toggle disabled" href="{{ route('home') }}">{{ trans('page.home') }}</a>
                                 </li>
                                 <li class="dropdown">
-                                    <a data-toggle="dropdown" class="dropdown-toggle disabled" href="{{ route('books.list') }}">{{ trans('page.category') }}</a>
+                                    <a data-toggle="dropdown" class="dropdown-toggle disable" href="{{ route('books.list') }}">{{ trans('page.category') }}</a>
                                     <ul class="dropdown-menu">
                                         @foreach ($categories as $category)
                                             <li >

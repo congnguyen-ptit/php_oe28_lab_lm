@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Models\User;
 use App\Http\Models\Category;
+use App\Http\Models\Location;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -20,14 +21,10 @@ class UserController extends Controller
             $follow = false;
             $user = User::where('user_slug', $slug)->firstOrFail();
             if (Auth::check()) {
-                $isFollowed = $user->followed()->wherePivot('follower_id', Auth::id())->exists();
-                if ($isFollowed) {
-                    $follow = true;
-                }
+                $follow = $user->followed()->wherePivot('follower_id', Auth::id())->exists();
             } else {
                 $follow = false;
             }
-
             return view('user.pages.userview')->with([
                 'user' => $user,
                 'follow' => $follow,
@@ -53,4 +50,10 @@ class UserController extends Controller
         return redirect()->route('user.detail', $user->user_slug);
     }
 
+    public function myAccount($id)
+    {
+        $user = User::find($id);
+
+        return view('user.pages.myaccount', compact('user'));
+    }
 }
