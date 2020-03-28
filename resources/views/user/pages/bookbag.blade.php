@@ -1,6 +1,6 @@
 @extends('user.layouts.app')
 
-@section('title')
+@section('title', trans('page.viewcart'))
 
 @section('content')
 <section class="page-banner services-banner">
@@ -25,26 +25,14 @@
                 <div class="container">
                     <div class="row">
                         <div class="cart-head">
-                            <div class="col-xs-12 col-sm-6 account-option">
-                                <strong>Scott Fitzgerald</strong>
-                                <ul>
-                                    <li><a href="#">Edit Account</a></li>
-                                    <li class="divider">|</li>
-                                    <li><a href="#">Edit Pin </a></li>
-                                </ul>
-                            </div>
-                            <div class="col-xs-12 col-sm-6 library-info">
-                                <ul>
-                                    <li>
-                                        <strong>Home Library:</strong>
-                                        Stephen A. Schwarzman Building
-                                    </li>
-                                    <li>
-                                        <strong>Email:</strong>
-                                        <a href="mailto:scottfitzgerald@gmail.com">scottfitzgerald@gmail.com</a>
-                                    </li>
-                                </ul>
-                            </div>
+                            @auth
+                                <div class="col-xs-12 col-sm-6 account-option">
+                                    <strong>{{ Auth::user()->name }}</strong>
+                                </div>
+                                <div class="col-xs-12 col-sm-6 account-option">
+                                    <strong>{{ trans('page.mail') }}&#58; {{ Auth::user()->email }}</strong>
+                                </div>
+                            @endauth
                             <div class="clearfix"></div>
                         </div>
                         <div class="col-md-12">
@@ -53,185 +41,82 @@
                                     <div class="woocommerce table-tabs" id="responsiveTabs">
                                         <ul class="nav nav-tabs">
                                             <li class="active"><b class="arrow-up"></b><a data-toggle="tab" href="#sectionA">Book Bag</a></li>
-                                            <li><b class="arrow-up"></b><a data-toggle="tab" href="#sectionB">Holds (4)</a></li>
-                                            <li><b class="arrow-up"></b><a data-toggle="tab" href="#sectionC">My Checkouts (0)</a></li>
-                                            <li><b class="arrow-up"></b><a data-toggle="tab" href="#sectionD">My eBooks (1)</a></li>
-                                            <li><b class="arrow-up"></b><a data-toggle="tab" href="#sectionE">My Lists</a></li>
-                                            <li><b class="arrow-up"></b><a data-toggle="tab" href="#sectionF">Fines/Fees ($0.00)</a></li>
+                                            @auth
+                                            <li><b class="arrow-up"></b><a data-toggle="tab" href="#sectionB">{{ trans('page.borrowed') }}</a></li>
+                                            @endauth
                                         </ul>
                                         <div class="tab-content">
                                             <div id="sectionA" class="tab-pane fade in active">
-                                                <form method="post" action="http://libraria.demo.presstigers.com/cart-page.html">
+                                                <form method="POST" action="{{ route('user.request') }}">
+                                                    @csrf
                                                     <table class="table table-bordered shop_table cart">
                                                         <thead>
                                                             <tr>
-                                                                <th class="product-name">&nbsp;</th>
-                                                                <th class="product-name">Title</th>
-                                                                <th class="product-quantity">Action</th>
-                                                                <th class="product-price">Pickup Location </th>
-                                                                <th class="product-subtotal">&nbsp;</th>
+                                                                <th class="product-name">{{ trans('page.product') }}</th>
+                                                                <th class="product-price">{{ trans('page.Information') }}</th>
+                                                                <th class="product-quantity">{{ trans('page.time') }}</th>
+                                                                <th class="product-subtotal"><button type="submit" class="btn btn-primary btn-sm" >{{ trans('page.request') }}</button></th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
+                                                            @foreach (Cart::content() as $item)
                                                             <tr class="cart_item">
-                                                                <td data-title="cbox" class="product-cbox">
-                                                                    <span>
-                                                                        <input type="checkbox" id="cbox3" value="first_checkbox">
-                                                                    </span>
-                                                                </td>
                                                                 <td data-title="Product" class="product-name">
                                                                     <span class="product-thumbnail">
-                                                                        <a href="#"><img src="images/cart/cart-product-1.jpg" alt="cart-product-1"></a>
+                                                                        <a href="{{ route('book.detail', $item->options->slug) }}"><img src="{{ $item->options->img }}" alt="cart-product-1"></a>
                                                                     </span>
                                                                     <span class="product-detail">
-                                                                        <a href="#"><strong>The Great Gatsby</strong></a>
-                                                                        <span><strong>Author:</strong> F. Scott Fitzgerald</span>
-                                                                        <span><strong>ISBN:</strong> 9781581573268</span>
-                                                                        <span><strong>Fees:</strong> <em>$10</em></span>
+                                                                        <a href="{{ route('book.detail', $item->options->slug) }}"><strong>{{ $item->name }}</strong></a>
+                                                                        <span><strong>{{ trans('page.author') }}&#58;</strong> {{ $item->options->author }}</span>
                                                                     </span>
                                                                 </td>
                                                                 <td data-title="action" class="product-action">
-                                                                    <div class="dropdown">
-                                                                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">Edit Hold <b class="caret"></b></a>
-                                                                        <ul class="dropdown-menu">
-                                                                            <li><a href="#">Edit Hold</a></li>
-                                                                            <li><a href="#">Cancel Hold</a></li>
-                                                                            <li><a href="#">Add Another Hold</a></li>
-                                                                        </ul>
-                                                                    </div>
-                                                                    <div class="addition-action">
-                                                                        <small>Additional Actions:</small>
-                                                                        <ul>
-                                                                            <li><a href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
-                                                                            <li><a href="#"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
-                                                                            <li><a href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
-                                                                            <li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li>
-                                                                            <li><a href="#"><i class="fa fa-print" aria-hidden="true"></i></a></li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </td>
-                                                                <td data-title="Price" class="product-price">
-                                                                    <p><a href="#">Available </a> at 53rd Street Fiction (CLASSICS FIC MORRISON) plus 4 more <a href="#"> see all </a></p>
-                                                                </td>
-                                                                <td class="product-remove">
-                                                                    You've placed this item on hold. This item is in your book bag <a href="#">remove</a>
-                                                                </td>
-                                                            </tr>
-                                                            <tr class="cart_item">
-                                                                <td>
-                                                                    <span data-title="cbox" class="product-cbox">
-                                                                        <input type="checkbox" id="cbox1" value="first_checkbox">
-                                                                    </span>
+                                                                    @auth
+                                                                        <span><strong>{{ trans('page.user') }}&#58;</strong> {{ Auth::user()->name }}</span>
+                                                                        <br/>
+                                                                        <span><strong>{{ trans('page.location') }}&#58;<br/></strong>
+                                                                        @foreach (Auth::user()->locations as $location)
+                                                                            &#9679;
+                                                                            {{ $location->apartment_number }}&#44;
+                                                                            {{ $location->street }}&#44;
+                                                                            {{ $location->ward }}&#44;
+                                                                            {{ $location->district }}&#44;
+                                                                            {{ $location->city }}&#46;
+                                                                            <br/>
+                                                                        @endforeach
+                                                                        </span>
+                                                                        <span><strong>{{ trans('page.phonenumber') }}&#58;</strong> {{ Auth::user()->phone_number }}</span>
+                                                                        <span><strong>{{ trans('page.email') }}&#58;</strong> {{ Auth::user()->email }}</span>
+                                                                    @endauth
                                                                 </td>
                                                                 <td data-title="Product" class="product-name">
-                                                                    <span class="product-thumbnail">
-                                                                        <a href="#"><img src="images/cart/cart-product-2.jpg" alt="cart-product-2"></a>
-                                                                    </span>
-                                                                    <span class="product-detail">
-                                                                        <a href="#"><strong>The Great Gatsby</strong></a>
-                                                                        <span><strong>Author:</strong> F. Scott Fitzgerald</span>
-                                                                        <span><strong>ISBN:</strong> 9781581573268</span>
-                                                                        <span><strong>Fees:</strong> <em>$10</em></span>
-                                                                    </span>
-                                                                </td>
-                                                                <td data-title="action" class="product-action">
-                                                                    <div class="dropdown">
-                                                                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">Edit Hold <b class="caret"></b></a>
-                                                                        <ul class="dropdown-menu">
-                                                                            <li><a href="#">Edit Hold</a></li>
-                                                                            <li><a href="#">Cancel Hold</a></li>
-                                                                            <li><a href="#">Add Another Hold</a></li>
-                                                                        </ul>
-                                                                    </div>
-                                                                    <div class="addition-action">
-                                                                        <small>Additional Actions:</small>
-                                                                        <ul>
-                                                                            <li><a href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
-                                                                            <li><a href="#"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
-                                                                            <li><a href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
-                                                                            <li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li>
-                                                                            <li><a href="#"><i class="fa fa-print" aria-hidden="true"></i></a></li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </td>
-                                                                <td data-title="Price" class="product-price">
-                                                                    <p><a href="#">Available </a> at 53rd Street Fiction (CLASSICS FIC MORRISON) plus 4 more <a href="#"> see all </a></p>
+                                                                    <span><strong>{{ trans('page.from') }}&#58;</strong></span>
+                                                                    <input type="date" name="start_date[]" required="" value="{{ Carbon\Carbon::today()->toDateString() }}">
+                                                                    <span><strong>{{ trans('page.to') }}&#58;</strong></span>
+                                                                    <input type="date" name="end_date[]" required="">
                                                                 </td>
                                                                 <td class="product-remove">
-                                                                    You've placed this item on hold. This item is in your book bag <a href="#">remove</a>
+                                                                    <a class="remove" href="{{ route('bookbag.remove', $item->id) }}">
+                                                                    <button type="button" class="btn btn-primary">
+                                                                        <i class="fa fa-trash-o"></i>
+                                                                    </button>
+                                                                    </a>
                                                                 </td>
                                                             </tr>
-                                                            <tr class="cart_item">
-                                                                <td>
-                                                                    <span data-title="cbox" class="product-cbox">
-                                                                        <input type="checkbox" id="cbox2" value="first_checkbox">
-                                                                    </span>
-                                                                </td>
-                                                                <td data-title="Product" class="product-name">
-                                                                    <span class="product-thumbnail">
-                                                                        <a href="#"><img src="images/cart/cart-product-3.jpg" alt="cart-product-3"></a>
-                                                                    </span>
-                                                                    <span class="product-detail">
-                                                                        <a href="#"><strong>The Great Gatsby</strong></a>
-                                                                        <span><strong>Author:</strong> F. Scott Fitzgerald</span>
-                                                                        <span><strong>ISBN:</strong> 9781581573268</span>
-                                                                        <span><strong>Fees:</strong> <em>$10</em></span>
-                                                                    </span>
-                                                                </td>
-                                                                <td data-title="action" class="product-action">
-                                                                    <div class="dropdown">
-                                                                        <a href="#" data-toggle="dropdown" class="dropdown-toggle">Edit Hold <b class="caret"></b></a>
-                                                                        <ul class="dropdown-menu">
-                                                                            <li><a href="#">Edit Hold</a></li>
-                                                                            <li><a href="#">Cancel Hold</a></li>
-                                                                            <li><a href="#">Add Another Hold</a></li>
-                                                                        </ul>
-                                                                    </div>
-                                                                    <div class="addition-action">
-                                                                        <small>Additional Actions:</small>
-                                                                        <ul>
-                                                                            <li><a href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
-                                                                            <li><a href="#"><i class="fa fa-heart" aria-hidden="true"></i></a></li>
-                                                                            <li><a href="#"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
-                                                                            <li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li>
-                                                                            <li><a href="#"><i class="fa fa-print" aria-hidden="true"></i></a></li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </td>
-                                                                <td data-title="Price" class="product-price">
-                                                                    <p><a href="#">Available </a> at 53rd Street Fiction (CLASSICS FIC MORRISON) plus 4 more <a href="#"> see all </a></p>
-                                                                </td>
-                                                                <td class="product-remove">
-                                                                    You've placed this item on hold. This item is in your book bag <a href="#">remove</a>
-                                                                </td>
-                                                            </tr>
+                                                            @endforeach
                                                         </tbody>
                                                     </table>
                                                 </form>
                                             </div>
+                                            @auth
                                             <div id="sectionB" class="tab-pane fade in">
                                                 <h5>Lorem Ipsum Dolor</h5>
                                                 <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet.</p>
                                             </div>
-                                            <div id="sectionC" class="tab-pane fade in">
-                                                <h5>Lorem Ipsum Dolor</h5>
-                                                <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet.</p>
-                                            </div>
-                                            <div id="sectionD" class="tab-pane fade in">
-                                                <h5>Lorem Ipsum Dolor</h5>
-                                                <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet.</p>
-                                            </div>
-                                            <div id="sectionE" class="tab-pane fade in">
-                                                <h5>Lorem Ipsum Dolor</h5>
-                                                <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet.</p>
-                                            </div>
-                                            <div id="sectionF" class="tab-pane fade in">
-                                                <h5>Lorem Ipsum Dolor</h5>
-                                                <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet.</p>
-                                            </div>
+                                            @endauth
                                         </div>
                                     </div>
-                                </div><!-- .entry-content -->
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -240,5 +125,6 @@
         </main>
     </div>
 </div>
-
 @endsection
+
+

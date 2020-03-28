@@ -99,4 +99,12 @@ return [
     'myaccount' => 'My Account',
     'editaccount' => 'Edit Account',
     'personal' => 'Personal info',
+    'product' => 'Product',
+    'Information'  => 'Information',
+    'location' => 'Location',
+    'borrowed' => 'Borrowed',
+    'time' => 'Time',
+    'from' => 'From',
+    'to' => 'To',
+    'request' => 'Request',
 ];

@@ -39,6 +39,7 @@ Route::group(['prefix' => 'users'], function() {
     Route::get('/follow/{user}', 'UserController@follow')->name('user.follow')->middleware('auth');
     Route::get('/unfollow/{user}', 'UserController@unfollow')->name('user.unfollow')->middleware('auth');
     Route::get('/myaccount/{id}', 'UserController@myAccount')->name('user.account')->middleware('auth');
+    Route::post('/request', 'BorrowerRecordsController@request')->name('user.request')->middleware('auth');
 });
 
 Route::post('/comments/{book}', 'CommentController@store')->name('comments');

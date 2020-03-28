@@ -8,6 +8,7 @@ use App\Http\Models\User;
 use App\Http\Models\Category;
 use App\Http\Models\Publisher;
 use Illuminate\Support\Facades\Auth;
+use Cart;
 
 class BookController extends Controller
 {
@@ -23,6 +24,10 @@ class BookController extends Controller
         try {
             $liked = false;
             $book = Book::where('slug', $slug)->firstOrFail();
+            $added = false;
+            if (Cart::content()->contains('id', $book->id)) {
+                $added = true;
+            }
             if (Auth::check()) {
                 $isLiked = $book->likedUsers()->where('user_id', Auth::id())->exists();
                 if ($isLiked) {
@@ -35,6 +40,7 @@ class BookController extends Controller
             return view('user.pages.booksdetail')->with([
                 'book' => $book,
                 'liked' => $liked,
+                'added' => $added,
             ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);

@@ -37,13 +37,13 @@
                                         @endguest
                                         <div class="header-cart dropdown">
                                             @if (Cart::count() == config('const.empty'))
-                                                <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                                                    <i class="fa fa-shopping-cart"></i>
+                                                <a data-toggle="dropdown" class="dropdown-toggle" href="{{ route('bookbag.index') }}">
+                                                    <a href="{{ route('bookbag.index') }}"><i class="fa fa-shopping-cart"></i></a>
                                                     <small>{{ Cart::count() }}</small>
                                                 </a>
                                             @else
-                                                <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                                                    <i class="fa fa-shopping-cart"></i>
+                                                <a data-toggle="dropdown" class="dropdown-toggle" href="{{ route('bookbag.index') }}">
+                                                    <a href="{{ route('bookbag.index') }}"><i class="fa fa-shopping-cart"></i></a>
                                                     <small>{{ Cart::count() }}</small>
                                                 </a>
                                                 <div class="dropdown-menu cart-dropdown">
@@ -59,7 +59,7 @@
                                                                     <strong>{{ trans('page.author') }}&#58;</strong>{{ $item->options->author }}
                                                                 </div>
                                                             </div>
-                                                            <a class="remove" href="{{ route('bookbag.remove', $item->rowId) }}"><i class="fa fa-trash-o"></i></a>
+                                                            <a class="remove" href="{{ route('bookbag.remove', $item->id) }}"><i class="fa fa-trash-o"></i></a>
                                                         </li>
                                                         @endforeach
                                                     </ul>

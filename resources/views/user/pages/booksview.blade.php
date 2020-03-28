@@ -82,6 +82,7 @@
                                                                 <li><a href="#" target="_blank"><i class="fa fa-rss"></i></a></li>
                                                             </ul>
                                                         </div>
+                                                        @if ($book->quantity != config('const.empty'))
                                                         <div class="optional-links">
                                                             <ul>
                                                                 <li>
@@ -91,6 +92,7 @@
                                                                 </li>
                                                             </ul>
                                                         </div>
+                                                        @endif
                                                         <header class="entry-header">
                                                             <h3 class="entry-title">
                                                                 <a href="{{ route('book.detail', $book->slug) }}">{{ $book->name }}</a>
