@@ -5,4 +5,5 @@ return [
     'author' => '2',
     'user' => '1',
     'code' => '5',
+    'one' => '1',
 ];

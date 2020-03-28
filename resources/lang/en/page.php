@@ -16,7 +16,7 @@ return [
     'gatsby' => 'The Great Gatsby',
     'author' => 'Author',
     '1' => '1',
-    'viewcart' => 'View Cart',
+    'viewcart' => 'Bookbag',
     'checkout' => 'Checkout',
     'bloggridview' => 'Blog Grid View',
     'blogdetail' => 'Blog Detail',
@@ -96,4 +96,7 @@ return [
     'nobook' => 'This user does not have any books',
     'name' => 'Fullname',
     'passwordconfirmed' => 'Confirm Password',
+    'myaccount' => 'My Account',
+    'editaccount' => 'Edit Account',
+    'personal' => 'Personal info',
 ];

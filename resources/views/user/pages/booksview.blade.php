@@ -85,8 +85,8 @@
                                                         <div class="optional-links">
                                                             <ul>
                                                                 <li>
-                                                                    <a href="#" target="_blank" data-toggle="blog-tags" data-placement="top" title="{{ trans('page.atc') }}">
-                                                                        <i class="fa fa-shopping-cart"></i>
+                                                                    <a href="{{ route('bookbag.add', $book->id) }}" target="_blank" data-toggle="blog-tags" data-placement="top" title="{{ trans('page.atc') }}">
+                                                                        <i class="fa fa-plus" aria-hidden="true"></i>
                                                                     </a>
                                                                 </li>
                                                             </ul>
