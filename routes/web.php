@@ -20,6 +20,13 @@ Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 
 Route::group(['prefix' => 'admin', 'middleware' => ['auth' => 'admin']], function() {
     Route::get('/', 'AdminController@index')->name('admin.dashboard');
+    Route::get('/all-user', 'AdminController@showAll')->name('user.list');
+    Route::get('/all-user/all', 'AdminController@getData')->name('user.data');
+    Route::get('/edit/{id}', 'AdminController@edit')->name('user.edit');
+    Route::get('/delete/{id}', 'AdminController@delete')->name('user.delete');
+    Route::get('categories/{category}/show', 'AdminController@showCategory')->name('category.data');
+    Route::get('/all-author', 'AdminController@showAuthor')->name('user.author');
+    Route::get('/all-reader', 'AdminController@showAuthor')->name('user.reader');
 });
 
 Route::group(['prefix' => 'books'], function() {
