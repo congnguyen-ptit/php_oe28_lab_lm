@@ -51,20 +51,19 @@
                                         </div>
                                     </form>
                                 </div>
-                            </div>
-                        </section>
-                        <div class="row">
-                            <div class="col-md-9 col-md-push-3 news-events-list-view">
-                                <div class="news-list-box">
-                                    <div class="single-news-list">
-                                        <div class="social-content">
-                                            <div class="social-share">
-                                                <ul>
-                                                    <li><i class="fa fa-book" aria-hidden="true"></i> {{ $user->books->count() }}</li>
-                                                    <li><i class="fa fa-users" aria-hidden="true"></i> {{ $user->followed->count() }}</li>
-                                                    <li><i class="fa fa-binoculars" aria-hidden="true"></i> {{ $user->following->count() }}</li>
-                                                </ul>
-                                            </div>
+                            </section>
+                            <div class="row">
+                                <div class="col-md-9 col-md-push-3 news-events-list-view">
+                                    <div class="news-list-box">
+                                        <div class="single-news-list">
+                                            <div class="social-content">
+                                                <div class="social-share">
+                                                    <ul>
+                                                        <li><i class="fa fa-book" aria-hidden="true"></i> {{ $user->books->count() }}</li>
+                                                        <li><i class="fa fa-users" aria-hidden="true"></i> {{ $user->followed->count() }}</li>
+                                                        <li><i class="fa fa-binoculars" aria-hidden="true"></i> {{ $user->following->count() }}</li>
+                                                    </ul>
+                                                </div>
                                             <div class="social-media">
                                                 <ul>
                                                     {{ $follow ?? '' }}
@@ -77,7 +76,6 @@
                                                     <li><a href="#." target="_blank"><i class="fa fa-google-plus"></i></a></li>
                                                 </ul>
                                             </div>
-                                        </div>
                                         <figure>
                                             <a href="{{ route('user.detail', $user->user_slug) }}"><img src="images/smurf.png" alt="News &amp; Event"></a>
                                         </figure>
