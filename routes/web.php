@@ -30,10 +30,14 @@ Route::group(['prefix' => 'books'], function() {
     Route::get('/authors/{author}', 'BookController@showByAuthor')->name('book.author');
     Route::get('/search', 'BookController@searchByCategory')->name('book.search');
     Route::get('{category}', 'BookController@getChildrenCategories')->name('book.allcategories');
+    Route::get('/like/{book}', 'BookController@likeBook')->name('book.like')->middleware('auth');
+    Route::get('/unlike/{book}', 'BookController@unlikeBook')->name('book.unlike')->middleware('auth');
 });
 
 Route::group(['prefix' => 'users'], function() {
     Route::get('{user}/details', 'UserController@detail')->name('user.detail');
+    Route::get('/follow/{user}', 'UserController@follow')->name('user.follow')->middleware('auth');
+    Route::get('/unfollow/{user}', 'UserController@unfollow')->name('user.unfollow')->middleware('auth');
 });
 
 Route::post('/comments/{book}', 'CommentController@store')->name('comments');

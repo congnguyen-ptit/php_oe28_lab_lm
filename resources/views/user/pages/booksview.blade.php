@@ -65,7 +65,11 @@
                                                 <figure>
                                                     <img src="{{ $book->image }}" alt="{{ trans('page.book') }}">
                                                     <figcaption>
-                                                        <p><strong>{{ $book->name }}</strong></p>
+                                                        <p><strong>{{ $book->name }}
+                                                            @if ($book->quantity == config('const.empty'))
+                                                                <label id="out"> &#40;{{ trans('page.out') }} &#41;</label>
+                                                            @endif
+                                                        </strong></p>
                                                         <p><strong>{{ trans('page.author') }}&#58;</strong> {{ $book->user->name }}</p>
                                                     </figcaption>
                                                 </figure>
@@ -83,11 +87,6 @@
                                                                 <li>
                                                                     <a href="#" target="_blank" data-toggle="blog-tags" data-placement="top" title="{{ trans('page.atc') }}">
                                                                         <i class="fa fa-shopping-cart"></i>
-                                                                    </a>
-                                                                </li>
-                                                                <li>
-                                                                    <a href="#" target="_blank" data-toggle="blog-tags" data-placement="top" title="{{ trans('page.like') }}">
-                                                                        <i class="fa fa-heart"></i>
                                                                     </a>
                                                                 </li>
                                                             </ul>

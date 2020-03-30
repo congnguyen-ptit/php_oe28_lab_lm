@@ -1,7 +1,8 @@
 <?php
 return [
-    'take' => '5',
+    'take' => '9',
     'empty' => '0',
     'author' => '2',
     'user' => '1',
+    'code' => '5',
 ];
