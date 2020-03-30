@@ -24,6 +24,8 @@
             <div class="books-media-gird">
                 <div class="container">
                     <div class="row">
+                        <br>
+                        <br>
                         <h1>{{ trans('page.editaccount') }}</h1>
                         <hr>
                         <div class="row">
@@ -31,15 +33,30 @@
                                 <div class="text-center">
                                     <img src="images/smurf.png" class="avatar img-circle" alt="avatar">
                                 </div>
+                                <br>
+                                <div class="text-center">
+                                    <h2><span class="label label-info">{{ $user->role->name }}</span></h2>
+                                </div>
+                                <br>
+                                @can('Create')
+                                <br>
+                                <div class="text-center">
+                                    <a href="{{ route('user.book') }}" class="btn btn-warning">{{ trans('page.ab') }}</a>
+                                </div>
+                                @endcan
                             </div>
                             <div class="col-md-9 personal-info">
-                                <h3>{{ trans('page.personal') }}</h3>
-                                <form class="form-horizontal" role="form" method="POST" action="#">
+                                <br>
+                                <h2><span class="label label-info">{{ trans('page.personal') }}</span></h2>
+                                <br>
+                                <br>
+                                <form class="form-horizontal" role="form" method="POST" action="{{ route('user.save', $user->id) }}">
                                     @csrf
+                                    @method("PATCH")
                                     <div class="form-group">
                                         <label class="col-lg-3 control-label">{{ trans('page.name') }}</label>
                                         <div class="col-lg-8">
-                                            <input class="form-control" type="text" value="{{ $user->name }}" value="name">
+                                            <input class="form-control" type="text" value="{{ $user->name }}" name="name">
                                             @error('name')
                                                 <span class="invalid-feedback" role="alert">
                                                     <strong>{{ $message }}</strong>
@@ -56,23 +73,6 @@
                                                     <strong>{{ $message }}</strong>
                                                 </span>
                                             @enderror
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-lg-3 control-label">{{ trans('page.password') }}</label>
-                                        <div class="col-lg-8">
-                                            <input class="form-control" type="password" value="" name="password">
-                                            @error('password')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="col-lg-3 control-label">{{ trans('page.passwordconfirmed') }}</label>
-                                        <div class="col-lg-8">
-                                            <input class="form-control" type="password" value="" name="password_confirmation">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -96,6 +96,9 @@
                                                 </span>
                                             @enderror
                                         </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="hidden" name="role_id" value="{{ $user->role_id }}">
                                     </div>
                                     <div class="row">
                                         @foreach ($user->locations as $location)
@@ -161,9 +164,8 @@
                                     <div class="form-group">
                                         <label class="col-md-3 control-label"></label>
                                         <div class="col-md-8">
-                                            <input type="submit" name="save" class="btn btn-primary" value="Save Changes">
-                                            <span></span>
-                                            <input type="reset" name="reset" class="btn btn-default" value="Cancel">
+                                            <button type="submit" name="save" class="btn btn-primary" value="Save Changes">
+                                            <span><i class="fa fa-floppy-o" aria-hidden="true"></i></span></button>
                                         </div>
                                     </div>
                                 </form>

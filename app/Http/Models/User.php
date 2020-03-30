@@ -5,11 +5,13 @@ namespace App\Http\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Auth\Authenticatable as AuthenticableTrait;
+use Illuminate\Foundation\Auth\Access\Authorizable as AuthorizableTrait;
+use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends \Eloquent implements Authenticatable
+class User extends \Eloquent implements Authenticatable, Authorizable
 {
-    use AuthenticableTrait;
+    use AuthenticableTrait, AuthorizableTrait;
 
     protected $table = 'users';
     protected $fillable = [
@@ -51,7 +53,7 @@ class User extends \Eloquent implements Authenticatable
 
     public function comments()
     {
-        return $this->hasMany(Comments::class);
+        return $this->hasMany(Comment::class);
     }
 
     public function rates()
@@ -77,5 +79,20 @@ class User extends \Eloquent implements Authenticatable
     public function publishers()
     {
         return $this->belongsToMany(Publisher::class, 'books', 'user_id', 'publisher_id');
+    }
+
+    public static function boot() {
+        parent::boot();
+        static::deleting(function($user) {
+            $user->books()->delete();
+            $user->comments()->delete();
+            $user->borrowerRecords()->delete();
+            $user->locations()->delete();
+            $user->rates()->delete();
+        });
+    }
+
+    public function hasPermission(Permission $permission) {
+        return !! optional(optional($this->role)->permissions)->contains($permission);
     }
 }

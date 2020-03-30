@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Cart;
+
 use App\Http\Models\User;
 use App\Http\Models\Book;
 use App\Http\Models\BorrowerRecord;
 use Illuminate\Support\Facades\Auth;
+use App\Enums\Status;
+use Carbon\Carbon;
 
 class BorrowerRecordsController extends Controller
 {
@@ -19,6 +21,14 @@ class BorrowerRecordsController extends Controller
                 'fail' => trans('page.date'),
             ]);
         }
+        $start = Carbon::parse($datas['start_date']);
+        $end = Carbon::parse($datas['end_date']);
+        if ($end->diffInDays($start) > Status::Number) {
+            return redirect()->route('bookbag.index')->with([
+                'over' => trans('page.over'),
+            ]);
+        }
+
         $books = session()->get('item');
         foreach ($books as $key => $value) {
             $borrower_record = BorrowerRecord::create([
@@ -32,5 +42,17 @@ class BorrowerRecordsController extends Controller
         session()->forget('item');
 
         return redirect()->route('home');
+    }
+
+    public function recordDelete($id)
+    {
+        try {
+            $borrower_record = BorrowerRecord::find($id);
+            $borrower_record->delete();
+
+            return redirect()->back();
+        } catch (ModelNotFoundException $e) {
+            response()->view('errors.404_user_not_found', [], 404);
+        }
     }
 }

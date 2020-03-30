@@ -118,7 +118,7 @@
                                 </div>
                                 {{ $books->links() }}
                             @else
-                               <div class="container">
+                               <div class="books-gird">
                                    <h3>{{ trans('page.seeya') }}</h3>
                                </div>
                             @endif
@@ -142,6 +142,7 @@
                                                 </ul>
                                             </div>
                                         </div>
+                                        <br>
                                         <div data-accordion>
                                             <h5 class="widget-sub-title" data-control>{{ trans('page.authors') }}</h5>
                                             <div class="widget_categories" data-content>
@@ -157,6 +158,7 @@
                                             </div>
                                             <div class="clearfix"></div>
                                         </div>
+                                        <br>
                                         <div data-accordion>
                                             <h5 class="widget-sub-title" data-control>{{ trans('page.publishers') }}</h5>
                                             <div class="widget_categories" data-content>

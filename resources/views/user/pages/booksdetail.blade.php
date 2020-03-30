@@ -87,6 +87,7 @@
                                                     </a>
                                                     @endif
                                                 </li>
+                                                @endif
                                                 <li>
                                                     {{ $liked ?? '' }}
                                                     @if (!$liked)
@@ -99,7 +100,6 @@
                                                         </a>
                                                     @endif
                                                 </li>
-                                                @endif
                                             </ul>
                                         </div>
                                         <header class="entry-header">
@@ -126,7 +126,6 @@
                                                 <span class="btn btn-dark-gray">{{ trans('page.out') }}</span>
                                             @else
                                                 <span class="btn btn-dark-gray">{{ trans('page.available') }}</span>
-                                                <a href="#." class="btn btn-dark-gray">{{ trans('page.borrow') }}</a>
                                             @endif
                                         </div>
                                     </div>
