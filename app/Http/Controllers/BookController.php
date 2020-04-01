@@ -22,19 +22,20 @@ class BookController extends Controller
     {
         try {
             $liked = false;
+            $added = false;
             $book = Book::where('slug', $slug)->firstOrFail();
             if (Auth::check()) {
-                $isLiked = $book->likedUsers()->wherePivot('user_id', Auth::id())->exists();
-                if ($isLiked) {
-                    $liked = true;
-                }
-            } else {
-                $liked = false;
+                $like = $book->likedUsers()->wherePivot('user_id', Auth::id())->exists();
+            }
+            $item = session()->has('item') ? session()->get('item') : null;
+            if (isset($item[$book->id])) {
+                $added = true;
             }
 
             return view('user.pages.booksdetail')->with([
                 'book' => $book,
                 'liked' => $liked,
+                'added' => $added,
             ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);

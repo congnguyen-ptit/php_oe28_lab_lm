@@ -74,10 +74,18 @@
                                         </div>
                                         <div class="optional-links">
                                             <ul>
+                                                @if ($book->quantity != config('const.empty'))
                                                 <li>
-                                                    <a href="#" target="_blank" data-toggle="blog-tags" data-placement="top" title="Add To Cart">
-                                                        <i class="fa fa-shopping-cart"></i>
+                                                    {{ $added ?? '' }}
+                                                    @if (!$added)
+                                                    <a href="{{ route('bookbag.add', $book->id) }}" target="_blank" data-toggle="blog-tags" data-placement="top" title="Add To Cart">
+                                                        <i class="fa fa-plus" aria-hidden="true"></i>
                                                     </a>
+                                                    @else
+                                                    <a href="{{ route('bookbag.remove', $book->id) }}" target="_blank" data-toggle="blog-tags" data-placement="top" title="Add To Cart">
+                                                        <i class="fa3 fa-plus" aria-hidden="true"></i>
+                                                    </a>
+                                                    @endif
                                                 </li>
                                                 <li>
                                                     {{ $liked ?? '' }}
@@ -91,6 +99,7 @@
                                                         </a>
                                                     @endif
                                                 </li>
+                                                @endif
                                             </ul>
                                         </div>
                                         <header class="entry-header">
