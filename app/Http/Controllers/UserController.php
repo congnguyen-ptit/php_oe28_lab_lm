@@ -7,6 +7,7 @@ use App\Http\Models\User;
 use App\Http\Models\Category;
 use App\Http\Models\Location;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -55,5 +56,39 @@ class UserController extends Controller
         $user = User::find($id);
 
         return view('user.pages.myaccount', compact('user'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $datas = $request->all();
+        try{
+            $user = User::findOrFail($id);
+            $user->name = $request->name;
+            $user->username = $request->username;
+            $user->user_slug = Str::slug($request->name);
+            $user->email = $request->email;
+            $user->phone_number = $request->phone_number;
+            $user->role_id = $request->role_id;
+            $locations = Location::where('user_id', $id)->get();
+            foreach ($locations as $key => $location) {
+                $location->apartment_number = $datas['apartment_number'][$key];
+                $location->street = $datas['street'][$key];
+                $location->ward = $datas['ward'][$key];
+                $location->district = $datas['district'][$key];
+                $location->city = $datas['city'][$key];
+                $location->save();
+                $user->locations()->save($location);
+            }
+            $user->save();
+
+            return redirect()->back()->with('success', trans('page.su'));
+        } catch (ModelNotFoundException $e) {
+            response()->view('errors.404_user_not_found', [], 404);
+        }
+    }
+
+    public function addBook()
+    {
+        return view('user.pages.addbook');
     }
 }

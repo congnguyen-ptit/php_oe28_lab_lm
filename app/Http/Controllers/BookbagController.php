@@ -4,14 +4,27 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Models\Book;
+use App\Enums\Status;
+use App\Http\Models\BorrowerRecord;
+use Illuminate\Support\Facades\Auth;
 
 class BookbagController extends Controller
 {
     public function index()
     {
         $item = session()->has('item') ? session()->get('item') : null;
+        if (Auth::check()) {
+            $requestings = BorrowerRecord::where([
+                'user_id' => Auth::id(),
+                'status' => Status::Request,
+            ])->get();
+            $borroweds = BorrowerRecord::where([
+                'user_id' => Auth::id(),
+                'status' => Status::Borrowed,
+            ])->get();
+        }
 
-        return view('user.pages.bookbag', compact('item'));
+        return view('user.pages.bookbag', compact('item', 'requestings', 'borroweds'));
     }
 
     public function addBook($id)

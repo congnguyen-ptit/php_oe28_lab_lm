@@ -67,7 +67,7 @@
                                             <div class="col-md-12">
                                                 <div class="company-detail new-account bg-light margin-right">
                                                     <div class="new-user-head">
-                                                        <h2>{{ trans('page.create') }}</h2>
+                                                        <h2>{{ trans('page.createaccount') }}</h2>
                                                         <span class="underline left"></span>
                                                         <p></p>
                                                     </div>

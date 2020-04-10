@@ -34,11 +34,12 @@
                                             <span>&#47;</span>
                                             <a href="{{ route('logout') }}">{{ trans('page.logout') }}
                                             </a>
+                                            <span>&#124;</span>
                                         @endguest
                                         <div class="header-cart dropdown">
-                                            @if(session('item'))
                                                 <a data-toggle="dropdown" class="dropdown-toggle" href="{{ route('bookbag.index') }}">
                                                     <a href="{{ route('bookbag.index') }}"><i class="fa fa-shopping-cart"></i></a>
+                                                    @if(session('item'))
                                                     <small>{{ count(session('item')) }}</small>
                                                 </a>
                                                 <div class="dropdown-menu cart-dropdown">
@@ -60,7 +61,6 @@
                                                     </ul>
                                                     <div class="cart-buttons">
                                                         <a href="{{ route('bookbag.index') }}" class="btn btn-dark-gray">{{ trans('page.viewcart') }}</a>
-                                                        <a href="#" class="btn btn-primary">{{ trans('page.checkout') }}</a>
                                                     </div>
                                                 </div>
                                             @endif
