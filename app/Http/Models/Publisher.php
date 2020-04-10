@@ -24,4 +24,10 @@ class Publisher extends Model
     {
         return $this->belongsToMany(User::class, 'books', 'publisher_id', 'user_id');
     }
+    public static function boot() {
+        parent::boot();
+        static::deleting(function($publisher) {
+            $publisher->books()->delete();
+        });
+    }
 }

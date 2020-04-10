@@ -9,10 +9,11 @@ class Category extends Model
     protected $table = 'categories';
     protected $fillable = [
         'name',
+        'slug',
         'description',
         'parent_id',
     ];
-    public $timestamps = false;
+    public $timestamps = true;
 
     public function books()
     {
@@ -27,5 +28,13 @@ class Category extends Model
     public function children()
     {
         return $this->hasMany(Category::class, 'parent_id');
+    }
+    public static function boot()
+    {
+        parent::boot();
+        static::deleting(function($category) {
+            $category->books()->delete();
+            $category->children()->delete();
+        });
     }
 }
