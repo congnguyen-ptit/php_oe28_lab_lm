@@ -504,7 +504,7 @@ class AdminController extends Controller
             $publisher->location = $request->location;
             $publisher->save();
 
-            return redirect()->route('publisher.all')->with('success', trans('page.su'));
+            return redirect()->route('publisher.all')->with('success', trans('page.updatesuccessfully'));
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
@@ -532,7 +532,7 @@ class AdminController extends Controller
             'location' => $request->location,
         ]);
 
-        return redirect()->route('publisher.all')->with('cu', trans('page.cu'));
+        return redirect()->route('publisher.all')->with('createsucccessfully', trans('page.createsucccessfully'));
     }
 
     public function add()
@@ -563,7 +563,7 @@ class AdminController extends Controller
             'user_id' => $user->id,
         ]);
 
-        return redirect()->route('user.list')->with('cu', trans('page.cu'));
+        return redirect()->route('user.list')->with('createsucccessfully', trans('page.createsucccessfully'));
     }
 
     public function showCategory()
@@ -611,7 +611,7 @@ class AdminController extends Controller
             'parent_id' => $request->parent_id,
         ]);
 
-        return redirect()->route('category.list')->with('cu', trans('page.cu'));
+        return redirect()->route('category.list')->with('createsucccessfully', trans('page.createsucccessfully'));
     }
 
     public function editCategory($id)
@@ -723,7 +723,7 @@ class AdminController extends Controller
             $role->description = $request->description;
             $role->permissions()->sync($request->permission_id);
 
-            return redirect()->route('role.edit', $id)->with('success', trans('page.su'));
+            return redirect()->route('role.edit', $id)->with('success', trans('page.updatesuccessfully'));
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
@@ -743,7 +743,7 @@ class AdminController extends Controller
         ]);
         $role->permissions()->sync($request->permission_id);
 
-        return redirect()->route('role.list')->with('cu', trans('page.cu'));
+        return redirect()->route('role.list')->with('createsucccessfully', trans('page.createsucccessfully'));
     }
 
     public function deleteRole($id)
@@ -753,7 +753,7 @@ class AdminController extends Controller
             $role->permissions()->detach();
             $role->delete();
 
-            return redirect()->route('role.list')->with('success', trans('page.su'));
+            return redirect()->route('role.list')->with('success', trans('page.updatesuccessfully'));
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
