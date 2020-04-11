@@ -11,7 +11,7 @@ class Role extends Model
         'name',
         'description',
     ];
-    public $timestamps = false;
+    public $timestamps = true;
 
     public function users()
     {

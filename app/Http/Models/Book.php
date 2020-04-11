@@ -10,6 +10,7 @@ class Book extends Model
     protected $fillable = [
         'code',
         'name',
+        'slug',
         'description',
         'content',
         'image',
@@ -53,5 +54,13 @@ class Book extends Model
     public function likedUsers()
     {
         return $this->belongsToMany(User::class, 'favorite_books', 'book_id', 'user_id');
+    }
+    public static function boot() {
+        parent::boot();
+        static::deleting(function($book) {
+            $book->comments()->delete();
+            $book->rates()->delete();
+            $book->borrowerRecords()->delete();
+        });
     }
 }
