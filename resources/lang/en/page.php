@@ -167,7 +167,7 @@ return [
     'requesting' => 'Requesting',
     'save' => 'Save',
     'su' => 'Updated Successfully',
-    'cu' => 'Added Successfully',
+    'createsucccessfully' => 'Added Successfully',
     'ab' => 'Add book',
     'roles' => 'Roles',
     'bookrequest' => 'Book request',
