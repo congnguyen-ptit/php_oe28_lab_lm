@@ -75,7 +75,7 @@
                                     <a data-toggle="dropdown" class="dropdown-toggle disabled" href="{{ route('home') }}">{{ trans('page.home') }}</a>
                                 </li>
                                 <li class="dropdown">
-                                    <a data-toggle="dropdown" class="dropdown-toggle disable" href="{{ route('books.list') }}">{{ trans('page.category') }}</a>
+                                    <a data-toggle="dropdown" class="dropdown-toggle disable" href="{{ route('book.books.list') }}">{{ trans('page.category') }}</a>
                                     <ul class="dropdown-menu">
                                         @foreach ($categories as $category)
                                             <li >

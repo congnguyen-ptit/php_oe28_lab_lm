@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\Access\Authorizable as AuthorizableTrait;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends \Eloquent implements Authenticatable, Authorizable
+class User extends Model implements Authenticatable, Authorizable
 {
     use AuthenticableTrait, AuthorizableTrait;
 

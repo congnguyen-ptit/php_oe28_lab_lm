@@ -14,7 +14,7 @@ class CreateBorrowerRecordsTable extends Migration
     public function up()
     {
         Schema::create('borrower_records', function (Blueprint $table) {
-            $table->increment('id');
+            $table->increments('id');
             $table->integer('book_id');
             $table->integer('user_id');
             $table->date('start_date');

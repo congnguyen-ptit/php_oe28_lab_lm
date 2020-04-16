@@ -71,7 +71,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth' => 'admin']], functio
         Route::get('/{id}/edit', 'AdminController@editCategory')->name('edit');
         Route::patch('/{id}/save', 'AdminController@saveCategory')->name('save');
         Route::delete('/{id}/delete', 'AdminController@deleteCategory')->name('delete');
-    )};
+    });
     Route::group(['prefix' => 'roles', 'as' => 'role.'], function() {
         Route::get('/', 'AdminController@showRoles')->name('list');
         Route::get('/all', 'AdminController@getRolesData')->name('data');

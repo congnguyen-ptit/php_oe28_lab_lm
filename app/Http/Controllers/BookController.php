@@ -89,7 +89,7 @@ class BookController extends Controller
         $category = $request->category;
         if (empty($keywords)) {
             if ($category === 'all') {
-                return redirect()->route('books.list');
+                return redirect()->route('book.books.list');
             } else {
                 return redirect()->route('book.category', $category);
             }
@@ -201,8 +201,4 @@ class BookController extends Controller
             response()->view('errors.404_user_not_found', [], 404);
         }
     }
-
-
-
-
 }
