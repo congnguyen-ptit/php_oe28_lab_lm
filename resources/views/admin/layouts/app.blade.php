@@ -39,8 +39,8 @@
     <script src="{{ asset('bower_components/bower_package/dist/js/pages/dashboard2.js') }}"></script>
     <script src="{{ asset('bower_components/bower_package/dist/js/demo.js') }}"></script>
     <script src="{{ asset('bower_components/bower_package/js/abc.js') }}"></script>
-    <script src="{{ asset('js/app.js') }}"></script>
-    <script src="{{ asset('bower_components/bower_package/bower_components/datatables.net/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('bower_components/bower_package/js/tables.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('bower_components/bower_package/bower_components/datatables.net/js/jquery.dataTables.min.js') }}" type="text/javascript"></script>
 </body>
 </html>

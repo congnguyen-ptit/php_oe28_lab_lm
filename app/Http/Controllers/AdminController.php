@@ -80,7 +80,7 @@ class AdminController extends Controller
                     return $location->apartment_number.','.$location->street;
                 }
             })
-            ->addColumn('action', `
+            ->addColumn('action', '
                 <a href="{{ route(\'user.edit\', $id) }}">
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                 </a>&#124;
@@ -88,7 +88,7 @@ class AdminController extends Controller
                     @csrf
                     @method("DELETE")
                     <button type="submit"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
-                </form>`
+                </form>'
             )
             ->rawColumns(['action'])
             ->make('true');
@@ -108,7 +108,7 @@ class AdminController extends Controller
             ->addColumn('category', function($book) {
                 return $book->category->name;
             })
-            ->addColumn('action', `
+            ->addColumn('action', '
                 <a href="{{ route(\'book.edit\', $id) }}" data-toggle="tooltip">
                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                 </a>&#124;
@@ -116,7 +116,7 @@ class AdminController extends Controller
                     @csrf
                     @method("DELETE")
                     <button type="submit"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
-                </form>`
+                </form>'
             )
             ->rawColumns(['action', 'author', 'publisher', 'category'])
             ->make('true');
@@ -173,10 +173,10 @@ class AdminController extends Controller
             ->addColumn('book', function($borrower_record) {
                 return $borrower_record->book->name;
             })
-            ->addColumn('action', `
+            ->addColumn('action', '
                 <a href="{{ route(\'record.detail\', $id) }}">
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </a>`
+                </a>'
             )
             ->editColumn('status', function($borrower_record) {
                 if ($borrower_record->status == Status::Request) {
@@ -214,7 +214,7 @@ class AdminController extends Controller
             ->addColumn('book', function($borrower_record) {
                 return $borrower_record->book->name;
             })
-            ->addColumn('action', `
+            ->addColumn('action', '
                 <a href="{{ route(\'record.detail\', $id) }}">
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                 </a>&#124;
@@ -222,7 +222,7 @@ class AdminController extends Controller
                     @csrf
                     @method("PATCH")
                     <button type="submit"><i class="fa fa-ban" aria-hidden="true"></i></button>
-                </form>`
+                </form>'
             )
             ->editColumn('status', function($borrower_record) {
                 if ($borrower_record->status == Status::Request) {
@@ -349,7 +349,7 @@ class AdminController extends Controller
             ->addColumn('book', function($borrower_record) {
                 return $borrower_record->book->name;
             })
-            ->addColumn('action', `
+            ->addColumn('action', '
                 <a href="{{ route(\'record.detail\', $id) }}">
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                 </a>&#124;
@@ -357,7 +357,7 @@ class AdminController extends Controller
                     @csrf
                     @method("PATCH")
                     <button type="submit"><i class="fa fa-undo" aria-hidden="true"></i></button>
-                </form>`
+                </form>'
             )
             ->editColumn('status', function($borrower_record) {
                 if ($borrower_record->status == Status::Borrowed) {
@@ -386,10 +386,10 @@ class AdminController extends Controller
             ->addColumn('book', function($borrower_record) {
                 return $borrower_record->book->name;
             })
-            ->addColumn('action', `
+            ->addColumn('action', '
                 <a href="{{ route(\'record.detail\', $id) }}">
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </a>`
+                </a>'
             )
             ->editColumn('status', function($borrower_record) {
                 if ($borrower_record->status == Status::Returned) {
@@ -415,7 +415,7 @@ class AdminController extends Controller
                     return $location->apartment_number . ',' . $location->street;
                 }
             })
-            ->addColumn('action', `
+            ->addColumn('action', '
                 <a href="{{ route(\'user.edit\', $id) }}">
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                 </a>&#124;
@@ -423,7 +423,7 @@ class AdminController extends Controller
                     @csrf
                     @method("DELETE")
                     <button type="submit"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
-                </form>`
+                </form>'
             )
             ->rawColumns(['action'])
             ->make('true');
@@ -446,7 +446,7 @@ class AdminController extends Controller
                     return $location->apartment_number.','.$location->street;
                 }
             })
-            ->addColumn('action', `
+            ->addColumn('action', '
                 <a href="{{ route(\'user.edit\', $id) }}">
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                 </a>&#124;
@@ -454,7 +454,7 @@ class AdminController extends Controller
                     @csrf
                     @method("DELETE")
                     <button type="submit"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
-                </form>`
+                </form>'
             )
             ->rawColumns(['action'])
             ->make('true');
@@ -470,7 +470,7 @@ class AdminController extends Controller
         $publishers = Publisher::orderBy('created_at', 'DESC');
 
         return Datatables::of($publishers)
-            ->addColumn('action', `
+            ->addColumn('action', '
                 <a href="{{ route(\'publisher.edit\', $id) }}">
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                 </a>&#124;
@@ -478,7 +478,7 @@ class AdminController extends Controller
                     @csrf
                     @method("DELETE")
                     <button type="submit"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
-                </form>`
+                </form>'
             )
             ->rawColumns(['action'])
             ->make('true');
@@ -576,7 +576,7 @@ class AdminController extends Controller
         $categories = Category::all();
 
         return Datatables::of($categories)
-            ->addColumn('action', `
+            ->addColumn('action', '
                 <a href="{{ route(\'category.edit\', $id) }}">
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                 </a>&#124;
@@ -584,7 +584,7 @@ class AdminController extends Controller
                     @csrf
                     @method("DELETE")
                     <button type="submit"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
-                </form>`
+                </form>'
             )
             ->editColumn('parent_id', function($category) {
                 if ($category->parent_id == config('const.empty')) {
@@ -670,10 +670,10 @@ class AdminController extends Controller
             ->addColumn('book', function($borrower_record) {
                 return $borrower_record->book->name;
             })
-            ->addColumn('action', `
+            ->addColumn('action', '
                 <a href="{{ route(\'record.detail\', $id) }}">
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </a>`
+                </a>'
             )
             ->editColumn('status', function($borrower_record) {
                 if ($borrower_record->status == Status::Returned) {
@@ -694,10 +694,10 @@ class AdminController extends Controller
         $roles = Role::all();
 
         return Datatables::of($roles)
-            ->addColumn('action', `
+            ->addColumn('action', '
                 <a href="{{ route(\'role.edit\', $id) }}">
                     <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </a>`
+                </a>'
             )
             ->rawColumns(['action'])
             ->make('true');
