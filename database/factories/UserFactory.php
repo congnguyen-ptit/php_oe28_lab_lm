@@ -4,12 +4,13 @@
 
 use App\Http\Models\User;
 use Faker\Generator as Faker;
-
+use Illuminate\Support\Str;
 
 $factory->define(User::class, function (Faker $faker) {
     return [
         'code' => Str::random(5),
         'name' => $faker->name,
+        'user_slug' => Str::slug($faker->name),
         'email' => $faker->unique()->safeEmail,
         'phone_number' => $faker->phoneNumber,
         'username' => $faker->unique()->name,
