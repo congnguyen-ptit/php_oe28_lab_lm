@@ -84,7 +84,7 @@
                                                     </a>
                                                     @else
                                                     <a href="#" id="removebook">
-                                                        <i class="fa3 fa-plus" aria-hidden="true"></i>
+                                                        <i class="fa fa-plus" aria-hidden="true"></i>
                                                     </a>
                                                     @endif
                                                 </li>
@@ -93,13 +93,13 @@
                                                 <li>
                                                     {{ $liked ?? '' }}
                                                     @if (!$liked)
-                                                        <a id="likebook" href="#">
-                                                            <i class="fa fa-heart"></i>
-                                                        </a>
+                                                    <a id="likebook" href="#">
+                                                        <i class="fa fa-heart"></i>
+                                                    </a>
                                                     @else
-                                                        <a id=unlikebook href="#">
-                                                            <i class="fa2 fa-heart"></i>
-                                                        </a>
+                                                    <a id=unlikebook href="#">
+                                                        <i class="fa2 fa-heart"></i>
+                                                    </a>
                                                     @endif
                                                 </li>
                                                 @endauth
