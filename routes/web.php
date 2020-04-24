@@ -84,19 +84,17 @@ Route::group(['prefix' => 'admin', 'middleware' => ['auth' => 'admin']], functio
 });
 
 Route::group(['prefix' => 'books', 'as' => 'book.'], function() {
-    Route::get('/', 'BookController@index')->name('books.list');
-    Route::get('{book}/details', 'BookController@detail')->name('detail');
+    Route::get('{book}/details', 'BookController@showBySlug')->name('detail');
     Route::get('/categories/{category}', 'BookController@showByCategory')->name('category');
     Route::get('/publishers/{publisher}', 'BookController@showByPublisher')->name('publisher');
     Route::get('/authors/{author}', 'BookController@showByAuthor')->name('author');
     Route::get('/search', 'BookController@searchByCategory')->name('search');
     Route::get('{category}', 'BookController@getChildrenCategories')->name('allcategories');
-    Route::get('/like/{book}', 'BookController@likeBook')->name('like')->middleware('auth');
-    Route::get('/unlike/{book}', 'BookController@unlikeBook')->name('unlike')->middleware('auth');
-    Route::post('/store', 'BookController@store')->name('store');
-    Route::patch('/{id}/save', 'BookController@update')->name('save');
-    Route::delete('/{id}/delete', 'BookController@delete')->name('delete');
+    Route::get('/like/{book}', 'BookController@like')->name('like')->middleware('auth');
+    Route::get('/unlike/{book}', 'BookController@unlike')->name('unlike')->middleware('auth');
 });
+
+Route::resource('books', 'BookController');
 
 Route::group(['prefix' => 'users', 'as' => 'user.'], function() {
     Route::get('{user}/details', 'UserController@detail')->name('detail');

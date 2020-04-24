@@ -86,7 +86,8 @@
                                                             <div class="optional-links">
                                                                 <ul>
                                                                     <li>
-                                                                        <a href="{{ route('bookbag.add', $book->id) }}" target="_blank" data-toggle="blog-tags" data-placement="top" title="{{ trans('page.atc') }}">
+                                                                        <input type="hidden" id="book_id" value="{{ $book->id }}">
+                                                                        <a href="#" id="addbook">
                                                                             <i class="fa fa-plus" aria-hidden="true"></i>
                                                                         </a>
                                                                     </li>

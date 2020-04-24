@@ -7,9 +7,17 @@ use App\Http\Models\Book;
 use App\Enums\Status;
 use App\Http\Models\BorrowerRecord;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\Book\BookRepoInterface;
 
 class BookbagController extends Controller
 {
+    protected $bookRepo;
+
+    function __construct(
+        BookRepoInterface $bookRepo
+    ) {
+        $this->bookRepo = $bookRepo;
+    }
     public function index()
     {
         $item = session()->has('item') ? session()->get('item') : null;
@@ -30,7 +38,7 @@ class BookbagController extends Controller
     public function addBook($id)
     {
         try {
-            $book = Book::find($id);
+            $book = $this->bookRepo->findById($id);
             if (!$book) {
                 abort(404);
             }
@@ -47,10 +55,14 @@ class BookbagController extends Controller
                 ];
                 session()->put('item', $item);
 
-                return redirect()->back()->with('success', trans('page.success'));
+                return response()->json([
+                    'success' => trans('page.createsucccessfully'),
+                ]);
             }
             if (isset($item[$id])) {
-                return redirect()->back()->with('exist', trans('page.exist'));
+                return response()->json([
+                    'exist' => trans('page.exist'),
+                ]);
             }
             $item[$id] = [
                 'id' => $book->id,
@@ -61,7 +73,9 @@ class BookbagController extends Controller
             ];
             session()->put('item', $item);
 
-            return redirect()->back()->with('success', trans('page.success'));
+            return response()->json([
+                'success' => trans('page.createsucccessfully'),
+            ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
@@ -75,6 +89,8 @@ class BookbagController extends Controller
             session()->put('item', $item);
         }
 
-        return redirect()->back()->with('deleted', trans('page.rm'));
+        return response()->json([
+            'deleted' => trans('page.rm'),
+        ]);
     }
 }

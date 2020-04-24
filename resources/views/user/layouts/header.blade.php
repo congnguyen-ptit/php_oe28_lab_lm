@@ -55,7 +55,10 @@
                                                                     <strong>{{ trans('page.author') }}&#58;</strong>{{ $item['author'] }}
                                                                 </div>
                                                             </div>
-                                                            <a class="remove" href="{{ route('bookbag.remove', $item['id']) }}"><i class="fa fa-trash-o"></i></a>
+                                                            <input type="hidden" id="book_id" value="{{ $item['id'] }}">
+                                                            <a class="remove" href="#" id="removebook">
+                                                                <i class="fa fa-trash-o"></i>
+                                                            </a>
                                                         </li>
                                                         @endforeach
                                                     </ul>
@@ -75,7 +78,7 @@
                                     <a data-toggle="dropdown" class="dropdown-toggle disabled" href="{{ route('home') }}">{{ trans('page.home') }}</a>
                                 </li>
                                 <li class="dropdown">
-                                    <a data-toggle="dropdown" class="dropdown-toggle disable" href="{{ route('book.books.list') }}">{{ trans('page.category') }}</a>
+                                    <a data-toggle="dropdown" class="dropdown-toggle disable" href="{{ route('books.index') }}">{{ trans('page.category') }}</a>
                                     <ul class="dropdown-menu">
                                         @foreach ($categories as $category)
                                             <li >

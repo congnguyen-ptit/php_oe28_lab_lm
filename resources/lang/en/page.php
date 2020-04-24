@@ -174,4 +174,6 @@ return [
     'rolename' => 'Role name',
     'editrole' => 'Edit role',
     'permissions' => 'Permissions',
+    'unliked' => 'Unliked this book',
+    'liked' => 'You like this book',
 ];

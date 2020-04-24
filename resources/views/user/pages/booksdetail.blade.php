@@ -73,33 +73,36 @@
                                             </ul>
                                         </div>
                                         <div class="optional-links">
+                                            <input type="hidden" id="book_id" value="{{ $book->id }}">
                                             <ul>
                                                 @if ($book->quantity != config('const.empty'))
                                                 <li>
                                                     {{ $added ?? '' }}
                                                     @if (!$added)
-                                                    <a href="{{ route('bookbag.add', $book->id) }}" target="_blank" data-toggle="blog-tags" data-placement="top" title="Add To Cart">
+                                                    <a href="#" id="addbook">
                                                         <i class="fa fa-plus" aria-hidden="true"></i>
                                                     </a>
                                                     @else
-                                                    <a href="{{ route('bookbag.remove', $book->id) }}" target="_blank" data-toggle="blog-tags" data-placement="top" title="Add To Cart">
+                                                    <a href="#" id="removebook">
                                                         <i class="fa3 fa-plus" aria-hidden="true"></i>
                                                     </a>
                                                     @endif
                                                 </li>
                                                 @endif
+                                                @auth
                                                 <li>
                                                     {{ $liked ?? '' }}
                                                     @if (!$liked)
-                                                        <a href="{{ route('book.like', $book->id) }}" target="_blank" data-toggle="blog-tags" data-placement="top" title="Like">
+                                                        <a id="likebook" href="#">
                                                             <i class="fa fa-heart"></i>
                                                         </a>
                                                     @else
-                                                        <a href="{{ route('book.unlike', $book->id) }}" target="_blank" data-toggle="blog-tags" data-placement="top" title="Like">
+                                                        <a id=unlikebook href="#">
                                                             <i class="fa2 fa-heart"></i>
                                                         </a>
                                                     @endif
                                                 </li>
+                                                @endauth
                                             </ul>
                                         </div>
                                         <header class="entry-header">
