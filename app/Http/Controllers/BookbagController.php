@@ -3,33 +3,37 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Models\Book;
 use App\Enums\Status;
-use App\Http\Models\BorrowerRecord;
+use App\Repositories\BorrowerRecord\BorrowerRecordRepoInterface;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\Book\BookRepoInterface;
 
 class BookbagController extends Controller
 {
     protected $bookRepo;
+    protected $borrowerRecordRepo;
 
     function __construct(
-        BookRepoInterface $bookRepo
+        BookRepoInterface $bookRepo,
+        BorrowerRecordRepoInterface $borrowerRecordRepo
     ) {
         $this->bookRepo = $bookRepo;
+        $this->borrowerRecordRepo = $borrowerRecordRepo;
     }
     public function index()
     {
         $item = session()->has('item') ? session()->get('item') : null;
         if (Auth::check()) {
-            $requestings = BorrowerRecord::where([
+            $data = [
                 'user_id' => Auth::id(),
                 'status' => Status::Request,
-            ])->get();
-            $borroweds = BorrowerRecord::where([
+            ];
+            $requestings = $this->borrowerRecordRepo->findByAttr($data);
+            $dataBorrowed = [
                 'user_id' => Auth::id(),
                 'status' => Status::Borrowed,
-            ])->get();
+            ];
+            $borroweds = $this->borrowerRecordRepo->findByAttr($dataBorrowed);
         }
 
         return view('user.pages.bookbag', compact('item', 'requestings', 'borroweds'));

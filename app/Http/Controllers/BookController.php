@@ -9,6 +9,7 @@ use App\Repositories\Publisher\PublisherRepoInterface;
 use App\Repositories\User\UserRepoInterface;
 use App\Http\Requests\BookRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class BookController extends Controller
 {
@@ -72,24 +73,9 @@ class BookController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->authorize($book, 'update');
         $book = $this->bookRepo->findById($id);
-        if ($request->image == null) {
-            $file = $book->image;
-        } else {
-            $file = 'images/'.$request->image;
-        }
-        $data = [
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-            'content' => $request->content,
-            'description' => $request->description,
-            'image' => $file,
-            'quantity' => $request->quantity,
-            'category_id' => $request->category_id,
-            'user_id' => $request->user_id,
-            'publisher_id' => $request->publisher_id,
-        ];
+        $this->authorize($book, 'update');
+        $data = $request->all();
         try {
             $this->bookRepo->update($id, $data);
 
@@ -101,6 +87,7 @@ class BookController extends Controller
 
     public function destroy($id)
     {
+        $book = $this->bookRepo->findById($id);
         $this->authorize($book, 'delete');
         try {
             $this->bookRepo->destroy($id);

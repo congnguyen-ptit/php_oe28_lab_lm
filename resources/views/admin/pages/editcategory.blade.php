@@ -4,48 +4,41 @@
 
 @section('content')
     <div class="content-wrapper">
+        <a href="#" id="hello"> asdasd</a>
         <div class="container">
-<br>
-            <br>
-            <div class="banner-header">
-                <h1 class="btn btn-primary">{{ trans('page.edit') }}&#58; {{ $category->name }}</h1>
-            </div>
-            <br>
-            <br>
-            <form action="{{ route('category.save', $category->id) }}" method="POST" name="user_product">
+            <form action="{{ route('category.save', $category->id) }}" method="POST" id="formEditCategory">
                 @csrf
                 @method("PATCH")
-                <div class="form-row">
-                    <div class="form-group col-md-4">
-                        <label>{{ trans('page.cname') }}</label>
-                        <input type="text" class="form-control" name="name" value="{{ $category->name }}">
-                    </div>
+                <input type="hidden" name="id" id="category_id" value="{{ $category->id }}">
+                <div class="form-group">
+                    <label>{{ trans('page.cname') }}</label>
+                    <input type="text" class="form-control" name="name" value="{{ $category->name }}">
                     @error('name')
                         <span class="invalid-feedback" role="alert">
                             <strong>{{ $message }}</strong>
                         </span>
                     @enderror
-                    <div class="form-group col-md-6">
-                        <label>{{ trans('page.description') }}</label>
-                        <textarea class="form-control" name="description" rows="7">{{ $category->description }}</textarea>
-                    </div>
+                </div>
+                <div class="form-group">
+                    <label>{{ trans('page.description') }}</label>
+                    <textarea class="form-control" name="description" rows="7">{{ $category->description }}</textarea>
                     @error('description')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
                     @enderror
-                    <div class="form-group col-md-3">
-                        <label>{{ trans('page.category') }}</label>
-                        <select name="parent_id" >
-                            <option value="{{ $category->parent_id }}">{{ $category->name }}</option>
-                            @foreach ($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                </div>
+                <div class="form-group">
+                    <label>{{ trans('page.category') }}</label>
+                    <select name="parent_id" >
+                        <option value="{{ $category->parent_id }}">{{ $category->name }}</option>
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <p class="form-submit">
-                    <button class="btn-primary btn" name="submit" type="submit">{{ trans('page.save') }}
+                    <button class="btn btn-success" name="submit" type="submit">{{ trans('page.save') }}
                         <i class="fa fa-floppy-o" aria-hidden="true"></i>
                     </button>
                 </p>

@@ -24,4 +24,13 @@ class CategoryRepository extends ModelRepository implements CategoryRepoInterfac
 
         return $books;
     }
+
+    public function update($id, $data = [])
+    {
+        $category = $this->findById($id);
+        $category->name = $data['name'];
+        $category->description = $data['description'];
+        $category->parent_id = $data['parent_id'];
+        $category->save();
+    }
 }

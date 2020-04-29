@@ -568,7 +568,8 @@ class AdminController extends Controller
 
     public function showCategory()
     {
-        return view('admin.pages.categories');
+        $categories = Category::all();
+        return view('admin.pages.categories', compact('categories'));
     }
 
     public function getCategoryData()
@@ -616,28 +617,23 @@ class AdminController extends Controller
 
     public function editCategory($id)
     {
-        try {
-            $category = Category::find($id);
+        $category = Category::find($id);
 
-            return view('admin.pages.editcategory', compact('category'));
-        } catch (ModelNotFoundException $e) {
-            response()->view('errors.404_user_not_found', [], 404);
-        }
+        return view('admin.pages.editcategory', compact('category'));
     }
 
     public function saveCategory(Request $request, $id)
     {
-        try {
-            $category = Category::find($id);
-            $category->name = $request->name;
-            $category->description = $request->description;
-            $category->parent_id = $request->parent_id;
-            $category->save();
+        $category = Category::find($id);
+        $category->name = $request->name;
+        $category->description = $request->description;
+        $category->parent_id = $request->parent_id;
+        $category->save();
 
-            return redirect()->route('category.list');
-        } catch (ModelNotFoundException $e) {
-            response()->view('errors.404_user_not_found', [], 404);
-        }
+        return response()->json([
+            'success' => trans('page.su'),
+            'category' => $category,
+        ]);
     }
 
     public function deleteCategory($id)

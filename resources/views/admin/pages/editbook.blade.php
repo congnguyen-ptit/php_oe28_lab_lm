@@ -15,7 +15,7 @@
             </div>
             <br>
             <br>
-            <form action="{{ route('book.save', $book->id) }}" method="POST" name="user_product">
+            <form action="{{ route('books.update', $book->id) }}" method="POST" name="user_product">
                 @csrf
                 @method('PATCH')
                 <div class="form-row">
@@ -99,7 +99,7 @@
             <a href="{{ route('book.list') }}"><button type="submit" class="btn btn-primary">{{ trans('page.cancel') }}</button></a>
                 <br>
                 <br>
-            <form action="{{ route('book.delete', $book->id) }}" method="POST">
+            <form action="{{ route('book.list', $book->id) }}" method="POST">
                 @csrf
                 @method("DELETE")
                 <button onclick="return confirm('Are you sure?')" class="btn btn-danger sm">

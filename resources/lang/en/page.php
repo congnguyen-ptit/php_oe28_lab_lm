@@ -176,4 +176,7 @@ return [
     'permissions' => 'Permissions',
     'unliked' => 'Unliked this book',
     'liked' => 'You like this book',
+    'followed' => 'Followed',
+    'unfollowed' => 'Unfollowed',
+    'x' => 'x',
 ];

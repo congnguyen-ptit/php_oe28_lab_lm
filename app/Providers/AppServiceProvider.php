@@ -34,6 +34,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\User\UserRepoInterface::class,
             \App\Repositories\User\UserRepository::class
         );
+        $this->app->singleton(
+            \App\Repositories\BorrowerRecord\BorrowerRecordRepoInterface::class,
+            \App\Repositories\BorrowerRecord\BorrowerRecordRepository::class
+        );
     }
 
     /**

@@ -24,4 +24,13 @@ class PublisherRepository extends ModelRepository implements PublisherRepoInterf
 
         return $books;
     }
+
+    public function update($id, $data = [])
+    {
+        $publisher = $this->findById($id);
+        $publisher->name = $data['name'];
+        $publisher->slug = Str::slug($data['name']);
+        $publisher->location = $data['location'];
+        $publisher->save();
+    }
 }

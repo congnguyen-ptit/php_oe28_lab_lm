@@ -5,13 +5,8 @@
 @section('content')
 <div class="content-wrapper">
     <div class="container">
-        <br>
-        @if (session('createsucccessfully'))
-            <span class="label label-success">{{ session('createsucccessfully') }}</span>
-        @endif
-        <br>
         <div class="table-wrapper">
-            <table id="categories-table" class="table table-striped " cellspacing="0" width="100%">
+            <table class="table table-striped table-hover">
                 <thead>
                     <tr>
                         <th class="th-sm">{{ trans('page.id') }}
@@ -29,9 +24,28 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach($categories as $key => $category)
+                    <tr>
+                        <td>{{ $key + 1 }}</td>
+                        <td>{{ $category->name }}</td>
+                        <td>{{ $category->description }}</td>
+                        <td>{{ $category->parent_id }}</td>
+                        <td>{{ $category->created_at }}</td>
+                        <td id="action">
+                            <a href="{{ route('category.edit', $category->id) }}" class="edit open-modal" data-toggle="modal">
+                                <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
+                            </a>
+                            <a onclick="event.preventDefault();deleteCategoryForm({{$category->id}});" href="#" class="delete" data-toggle="modal">
+                                <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
+                            </a>
+                        </td>
+                    </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+
+@include('admin.pages.categoryedit')
 @endsection
