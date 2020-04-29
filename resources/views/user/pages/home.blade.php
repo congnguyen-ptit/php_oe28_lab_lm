@@ -144,7 +144,7 @@
                 @endforeach
             </ul>
             <div class="center-content">
-                <a href="{{ route('book.books.list') }}" class="btn btn-primary">{{ trans('page.viewmore') }}</a>
+                <a href="{{ route('books.index') }}" class="btn btn-primary">{{ trans('page.viewmore') }}</a>
             </div>
             <div class="clearfix"></div>
         </div>

@@ -66,13 +66,22 @@
                                                 </ul>
                                             </div>
                                             <div class="social-media">
+                                                <input type="hidden" id="user_id" value="{{ $user->id }}">
                                                 <ul>
                                                     @if (Auth::id() != $user->id)
                                                         {{ $follow ?? '' }}
                                                         @if (!$follow)
-                                                            <li><a href="{{ route('user.follow', $user->id) }}"><i class="fa fa-user-plus" aria-hidden="true"></i></a></li>
+                                                            <li>
+                                                                <a href="#" id="follow">
+                                                                    <i class="fa fa-user-plus" aria-hidden="true"></i>
+                                                                </a>
+                                                            </li>
                                                         @else
-                                                            <li><a href="{{ route('user.unfollow', $user->id) }}"><i class="fa fa-minus-square" aria-hidden="true"></i></a></li>
+                                                            <li>
+                                                                <a href="#" id="unfollow">
+                                                                    <i class="fa fa-minus-square" aria-hidden="true"></i>
+                                                                </a>
+                                                            </li>
                                                         @endif
                                                         <li><a href="#." target="_blank"><i class="fa fa-facebook"></i></a></li>
                                                         <li><a href="#." target="_blank"><i class="fa fa-google-plus"></i></a></li>

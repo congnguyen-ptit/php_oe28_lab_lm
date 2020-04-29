@@ -3,34 +3,125 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Repositories\Book\BookRepoInterface;
+use App\Repositories\Category\CategoryRepoInterface;
+use App\Repositories\Publisher\PublisherRepoInterface;
+use App\Repositories\User\UserRepoInterface;
 use App\Http\Requests\BookRequest;
-use App\Policies\BookPolicy;
-use App\Http\Models\Book;
-use App\Http\Models\User;
-use App\Http\Models\Category;
-use App\Http\Models\Publisher;
 use Illuminate\Support\Facades\Auth;
-use App\Enums\UserRole;
-use Illuminate\Support\Str;
 
 class BookController extends Controller
 {
+    protected $bookRepo;
+    protected $categoryRepo;
+    protected $pubRepo;
+    protected $userRepo;
+
+    function __construct(
+        BookRepoInterface $bookRepo,
+        CategoryRepoInterface $categoryRepo,
+        PublisherRepoInterface $pubRepo,
+        UserRepoInterface $userRepo
+    ) {
+        $this->bookRepo = $bookRepo;
+        $this->categoryRepo = $categoryRepo;
+        $this->pubRepo = $pubRepo;
+        $this->userRepo = $userRepo;
+    }
+
     public function index()
     {
-
-        $books = Book::paginate(config('const.take'));
+        $books = $this->bookRepo->getAllPaginate(config('const.take'));
 
         return view('user.pages.booksview', compact('books'));
     }
 
-    public function detail($slug)
+    public function create()
+    {
+        //
+    }
+
+    public function store(BookRequest $request)
+    {
+        $data = [
+            'code' => Str::random(config('const.code')),
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+            'content' => $request->content,
+            'description' => $request->description,
+            'image' => 'images/'.$request->image,
+            'quantity' => $request->quantity,
+            'category_id' => $request->category_id,
+            'user_id' => $request->user_id,
+            'publisher_id' => $request->publisher_id,
+        ];
+        $this->bookRepo->create($data);
+
+        return redirect()->back()->with('cu', trans('page.cu'));
+    }
+
+    public function show($id)
+    {
+        //
+    }
+
+    public function edit($id)
+    {
+        //
+    }
+
+    public function update(Request $request, $id)
+    {
+        $this->authorize($book, 'update');
+        $book = $this->bookRepo->findById($id);
+        if ($request->image == null) {
+            $file = $book->image;
+        } else {
+            $file = 'images/'.$request->image;
+        }
+        $data = [
+            'name' => $request->name,
+            'slug' => Str::slug($request->name),
+            'content' => $request->content,
+            'description' => $request->description,
+            'image' => $file,
+            'quantity' => $request->quantity,
+            'category_id' => $request->category_id,
+            'user_id' => $request->user_id,
+            'publisher_id' => $request->publisher_id,
+        ];
+        try {
+            $this->bookRepo->update($id, $data);
+
+            return redirect()->back()->with('success', trans('page.su'));
+        } catch (ModelNotFoundException $e) {
+            response()->view('errors.404_user_not_found', [], 404);
+        }
+    }
+
+    public function destroy($id)
+    {
+        $this->authorize($book, 'delete');
+        try {
+            $this->bookRepo->destroy($id);
+
+            return redirect()->route('book.list');
+        } catch (ModelNotFoundException $e) {
+            response()->view('errors.404_user_not_found', [], 404);
+        }
+    }
+
+    public function showBySlug($slug)
     {
         try {
             $liked = false;
             $added = false;
-            $book = Book::where('slug', $slug)->firstOrFail();
+            $data = [
+                'slug' => $slug,
+            ];
+            $book = $this->bookRepo->findByAttrGetOne($data);
             if (Auth::check()) {
-                $liked = $book->likedUsers()->wherePivot('user_id', Auth::id())->exists();
+                $liked = $this->bookRepo->checkLiked($book, Auth::id());
             }
             $item = session()->has('item') ? session()->get('item') : null;
             if (isset($item[$book->id])) {
@@ -47,35 +138,36 @@ class BookController extends Controller
         }
     }
 
+    public function unlike($id)
+    {
+        $book = $this->bookRepo->findById($id);
+        $this->bookRepo->unlikeBook($id, Auth::id());
+
+        return response()->json([
+            'book' => $book,
+            'unliked' => trans('page.unliked'),
+        ], 200);
+    }
+
+    public function like($id)
+    {
+        $book = $this->bookRepo->findById($id);
+        $this->bookRepo->likeBook($id, Auth::id());
+
+        return response()->json([
+            'liked' => trans('page.liked'),
+            'book' => $book,
+        ], 200);
+    }
+
     public function showByCategory($slug)
     {
+        $dataCategory = [
+            'slug' => $slug
+        ];
         try {
-            $category = Category::where('slug', $slug)->firstOrFail();
+            $category = $this->categoryRepo->findByAttrGetOne($dataCategory);
             $books = $category->books()->paginate(config('const.take'));
-
-            return view('user.pages.booksview', compact('books'));
-        } catch (ModelNotFoundException $e) {
-            response()->view('errors.404_user_not_found', [], 404);
-        }
-    }
-
-    public function showByPublisher($slug)
-    {
-        try {
-            $publisher = Publisher::where('slug', $slug)->firstOrFail();
-            $books = $publisher->books()->paginate(config('const.take'));
-
-            return view('user.pages.booksview', compact('books'));
-        } catch (ModelNotFoundException $e) {
-            response()->view('errors.404_user_not_found', [], 404);
-        }
-    }
-
-    public function showByAuthor($slug)
-    {
-        try {
-            $author = User::where('user_slug', $slug)->firstOrFail();
-            $books = $author->books()->paginate(config('const.take'));
 
             return view('user.pages.booksview', compact('books'));
         } catch (ModelNotFoundException $e) {
@@ -89,14 +181,20 @@ class BookController extends Controller
         $category = $request->category;
         if (empty($keywords)) {
             if ($category === 'all') {
-                return redirect()->route('book.books.list');
+                return redirect()->route('books.index');
             } else {
                 return redirect()->route('book.category', $category);
             }
         } else {
             if ($category === 'all') {
                 try {
-                    $books = Book::where('name', 'LIKE', "%{$keywords}%")->orderBy('name')->paginate(config('const.take'));
+                    $data = [
+                        'column' => 'name',
+                        'operator' => 'LIKE',
+                        'keywords' => $keywords,
+                        'pages' => config('const.take'),
+                    ];
+                    $books = $this->bookRepo->searchByColumn($data);
 
                     return view('user.pages.booksview', compact('books'));
                 } catch (ModelNotFoundException $e) {
@@ -104,9 +202,7 @@ class BookController extends Controller
                 }
             } else {
                 try {
-                    $category_type = Category::where('slug', $category)->firstOrFail();
-                    $books = $category_type->books()->where('name', 'LIKE', "%{$keywords}%")
-                            ->orderBy('name')->paginate(config('const.take'));
+                    $books = $this->categoryRepo->getBooksFromCategory($category, $keywords);
 
                     return view('user.pages.booksview', compact('books'));
                 } catch (ModelNotFoundException $e) {
@@ -116,87 +212,46 @@ class BookController extends Controller
         }
     }
 
+    public function showByPublisher($slug)
+    {
+        $dataPub = [
+            'slug' => $slug
+        ];
+        try {
+            $publisher = $this->pubRepo->findByAttrGetOne($dataPub);
+            $books = $publisher->books()->paginate(config('const.take'));
+
+            return view('user.pages.booksview', compact('books'));
+        } catch (ModelNotFoundException $e) {
+            response()->view('errors.404_user_not_found', [], 404);
+        }
+    }
+
+    public function showByAuthor($slug)
+    {
+        $data = [
+            'user_slug' => $slug,
+        ];
+        try {
+            $author = $this->userRepo->findByAttrGetOne($data);
+            $books = $author->books()->paginate(config('const.take'));
+
+            return view('user.pages.booksview', compact('books'));
+        } catch (ModelNotFoundException $e) {
+            response()->view('errors.404_user_not_found', [], 404);
+        }
+    }
+
     public function getChildrenCategories($slug)
     {
+        $data = [
+            'slug' => $slug,
+        ];
         try {
-            $category = Category::where('slug', $slug)->firstOrFail();
+            $category = $this->categoryRepo->findByAttrGetOne($data);
             $child_category = $category->children()->paginate(config('const.take'));
 
             return view('user.pages.category', compact('child_category'));
-        } catch (ModelNotFoundException $e) {
-            response()->view('errors.404_user_not_found', [], 404);
-        }
-    }
-
-    public function likeBook($id)
-    {
-        $book = Book::find($id);
-        $book->likedUsers()->attach(Auth::id());
-
-        return redirect()->route('book.detail', $book->slug);
-    }
-
-    public function unlikeBook($id)
-    {
-        $book = Book::find($id);
-        $book->likedUsers()->detach(Auth::id());
-
-        return redirect()->route('book.detail', $book->slug);
-    }
-
-    public function store(BookRequest $request)
-    {
-        $this->authorize(Book::class, 'create');
-        $book = Book::create([
-            'code' => Str::random(config('const.code')),
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-            'content' => $request->content,
-            'description' => $request->description,
-            'image' => 'images/'.$request->image,
-            'quantity' => $request->quantity,
-            'category_id' => $request->category_id,
-            'user_id' => $request->user_id,
-            'publisher_id' => $request->publisher_id,
-        ]);
-
-        return redirect()->back()->with('cu', trans('page.cu'));
-    }
-
-    public function delete($id)
-    {
-        try {
-            $book = Book::findOrFail($id);
-            $this->authorize($book, 'delete');
-            $book->delete();
-
-            return redirect()->route('book.list');
-        } catch (ModelNotFoundException $e) {
-            response()->view('errors.404_user_not_found', [], 404);
-        }
-    }
-
-    public function update(Request $request, $id)
-    {
-        try {
-            $book = Book::findOrFail($id);
-            $this->authorize($book, 'update');
-            $book->name = $request->name;
-            $book->user_id = $request->user_id;
-            $book->slug = Str::slug($request->name);
-            $book->category_id = $request->category_id;
-            $book->publisher_id = $request->publisher_id;
-            $book->content = $request->content;
-            $book->description = $request->description;
-            $book->quantity = $request->quantity;
-            if ($request->image == null) {
-                $file = $book->image;
-            } else {
-                $book->image = 'images/'.$request->image;
-            }
-            $book->save();
-
-            return redirect()->back()->with('success', trans('page.su'));
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
