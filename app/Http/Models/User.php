@@ -12,6 +12,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Model implements Authenticatable, Authorizable
 {
     use AuthenticableTrait, AuthorizableTrait;
+    use Notifiable;
 
     protected $table = 'users';
     protected $fillable = [
@@ -23,6 +24,9 @@ class User extends Model implements Authenticatable, Authorizable
         'username',
         'password',
         'role_id',
+        'provider',
+        'provider_id',
+        'is_vip'
     ];
     protected $hidden = [
         'password',

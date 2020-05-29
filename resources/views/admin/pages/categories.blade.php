@@ -4,14 +4,19 @@
 
 @section('content')
 <div class="content-wrapper">
+    <section class="content-header">
+        <h1>
+            {{ trans('page.categories') }}
+        </h1>
+    </section>
     <div class="container">
         <div class="table-wrapper">
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th class="th-sm">{{ trans('page.id') }}
+                        <th class="th-sm">&#35;
                         </th>
-                        <th class="th-sm">{{ trans('page.name') }}
+                        <th class="th-sm">{{ trans('page.cname') }}
                         </th>
                         <th class="th-sm">{{ trans('page.description') }}
                         </th>
@@ -29,13 +34,19 @@
                         <td>{{ $key + 1 }}</td>
                         <td>{{ $category->name }}</td>
                         <td>{{ $category->description }}</td>
-                        <td>{{ $category->parent_id }}</td>
+                        <td>
+                            @if ($category->parent_id == config('const.empty'))
+                                {{ $category->name }}
+                            @else
+                                {{ $category->parent['name'] }}
+                            @endif
+                        </td>
                         <td>{{ $category->created_at }}</td>
                         <td id="action">
-                            <a href="{{ route('category.edit', $category->id) }}" class="edit open-modal" data-toggle="modal">
+                            <a href="{{ route('category.edit', $category->id) }}">
                                 <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
                             </a>
-                            <a onclick="event.preventDefault();deleteCategoryForm({{$category->id}});" href="#" class="delete" data-toggle="modal">
+                            <a href="javascript:;" data-url="{{ route('category.delete', $category->id) }}" class="delete">
                                 <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
                             </a>
                         </td>
@@ -43,9 +54,8 @@
                     @endforeach
                 </tbody>
             </table>
+            {{ $categories->links() }}
         </div>
     </div>
 </div>
-
-@include('admin.pages.categoryedit')
 @endsection

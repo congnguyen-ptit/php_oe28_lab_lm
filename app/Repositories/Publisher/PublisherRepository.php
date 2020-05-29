@@ -5,6 +5,7 @@ namespace App\Repositories\Publisher;
 use App\Repositories\ModelRepository;
 use App\Http\Models\Publisher;
 use App\Http\Models\Book;
+use Illuminate\Support\Str;
 
 class PublisherRepository extends ModelRepository implements PublisherRepoInterface
 {

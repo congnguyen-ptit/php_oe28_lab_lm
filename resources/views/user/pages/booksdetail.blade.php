@@ -79,30 +79,28 @@
                                                 <li>
                                                     {{ $added ?? '' }}
                                                     @if (!$added)
-                                                    <a href="#" id="addbook">
-                                                        <i class="fa fa-plus" aria-hidden="true"></i>
-                                                    </a>
+                                                        <a href="{{ route('bookbag.add', $book->id) }}" class="addbook" title="Add to bookbag">
+                                                            <i class="fa fa-plus" aria-hidden="true"></i>
+                                                        </a>
                                                     @else
-                                                    <a href="#" id="removebook">
-                                                        <i class="fa fa-plus" aria-hidden="true"></i>
-                                                    </a>
+                                                        <a href="{{ route('bookbag.remove', $book->id) }}" class="removebook" title="Remove from bookbag">
+                                                            <i class="fa2 fa-plus" aria-hidden="true"></i>
+                                                        </a>
                                                     @endif
                                                 </li>
                                                 @endif
-                                                @auth
                                                 <li>
                                                     {{ $liked ?? '' }}
                                                     @if (!$liked)
-                                                    <a id="likebook" href="#">
+                                                    <a class="likebook" href="{{ route('book.like', $book->id) }}">
                                                         <i class="fa fa-heart"></i>
                                                     </a>
                                                     @else
-                                                    <a id=unlikebook href="#">
+                                                    <a class="unlikebook" href="{{ route('book.unlike', $book->id) }}">
                                                         <i class="fa2 fa-heart"></i>
                                                     </a>
                                                     @endif
                                                 </li>
-                                                @endauth
                                             </ul>
                                         </div>
                                         <header class="entry-header">

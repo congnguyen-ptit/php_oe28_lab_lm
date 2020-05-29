@@ -7,6 +7,7 @@ use App\Http\Models\User;
 use App\Http\Models\Book;
 use App\Http\Models\Location;
 use Illuminate\Support\Str;
+use App\Enums\UserRole;
 
 class UserRepository extends ModelRepository implements UserRepoInterface
 {
@@ -64,5 +65,15 @@ class UserRepository extends ModelRepository implements UserRepoInterface
             $user->locations()->save($location);
         }
         $user->save();
+    }
+
+    public function getNonAdminUser()
+    {
+        return $this->model->where('role_id', '!=', UserRole::Administrator )->get();
+    }
+
+    public function getLatestUsers()
+    {
+        return $this->getNonAdminUser()->sortByDesc('created_at');
     }
 }

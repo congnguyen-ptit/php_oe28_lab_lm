@@ -70,6 +70,7 @@
                                                                 <label id="out"> &#40;{{ trans('page.out') }} &#41;</label>
                                                             @endif
                                                         </strong></p>
+                                                        <p><strong>Price&#58;</strong> {{ $book->price }} VND</p>
                                                         <p><strong>{{ trans('page.author') }}&#58;</strong> {{ $book->user->name }}</p>
                                                     </figcaption>
                                                 </figure>
@@ -86,8 +87,7 @@
                                                             <div class="optional-links">
                                                                 <ul>
                                                                     <li>
-                                                                        <input type="hidden" id="book_id" value="{{ $book->id }}">
-                                                                        <a href="#" id="addbook">
+                                                                        <a href="{{ route('bookbag.add', $book->id) }}" class="addbook" title="Add to bookbag">
                                                                             <i class="fa fa-plus" aria-hidden="true"></i>
                                                                         </a>
                                                                     </li>

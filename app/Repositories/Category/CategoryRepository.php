@@ -5,6 +5,7 @@ namespace App\Repositories\Category;
 use App\Repositories\ModelRepository;
 use App\Http\Models\Category;
 use App\Http\Models\Book;
+use Illuminate\Support\Str;
 
 class CategoryRepository extends ModelRepository implements CategoryRepoInterface
 {
@@ -29,6 +30,7 @@ class CategoryRepository extends ModelRepository implements CategoryRepoInterfac
     {
         $category = $this->findById($id);
         $category->name = $data['name'];
+        $category->slug = Str::slug($data['name']);
         $category->description = $data['description'];
         $category->parent_id = $data['parent_id'];
         $category->save();

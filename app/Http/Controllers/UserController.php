@@ -3,11 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Models\User;
-use App\Http\Models\Category;
-use App\Http\Models\Location;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use App\Repositories\User\UserRepoInterface;
 
 class UserController extends Controller
@@ -77,7 +73,9 @@ class UserController extends Controller
         try {
             $this->userRepo->update($id, $data);
 
-            return redirect()->back()->with('success', trans('page.su'));
+            return response()->json([
+                'success' => trans('page.su'),
+            ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
@@ -86,5 +84,60 @@ class UserController extends Controller
     public function addBook()
     {
         return view('user.pages.addbook');
+    }
+
+    public function checkInput(Request $request)
+    {
+        if (isset($request->email_check)) {
+            $data = [
+                'email' => $request->email,
+            ];
+            $user_email = $this->userRepo->findByAttr($data);
+            if(count($user_email) > config('const.empty') ) {
+                return response()->json([
+                    'existed' => true,
+                    'message' => trans('page.email.existed'),
+                ]);
+            } else {
+                return response()->json([
+                    'existed' => false,
+                ]);
+            }
+            exit();
+        }
+        if (isset($request->phone_check)) {
+            $data = [
+                'phone_number' => $request->phone_number,
+            ];
+            $user_phone_number = $this->userRepo->findByAttr($data);
+            if(count($user_phone_number) > config('const.empty') ) {
+                return response()->json([
+                    'existed' => true,
+                    'message' => trans('page.username.existed'),
+                ]);
+            } else {
+                return response()->json([
+                    'existed' => false,
+                ]);
+            }
+            exit();
+        }
+        if (isset($request->username_check)) {
+            $data = [
+                'username' => $request->username,
+            ];
+            $user_username = $this->userRepo->findByAttr($data);
+            if(count($user_username) > config('const.empty') ) {
+                return response()->json([
+                    'existed' => true,
+                    'message' => trans('page.username.existed'),
+                ]);
+            } else {
+                return response()->json([
+                    'existed' => false,
+                ]);
+            }
+            exit();
+        }
     }
 }

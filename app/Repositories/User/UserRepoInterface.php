@@ -10,4 +10,6 @@ interface UserRepoInterface
     public function checkFollow(User $user, $user_id);
     public function follow($id, $user_id);
     public function unfollow($id, $user_id);
+    public function getNonAdminUser();
+    public function getLatestUsers();
 }

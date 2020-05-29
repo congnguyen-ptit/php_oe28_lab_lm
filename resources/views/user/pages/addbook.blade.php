@@ -33,7 +33,7 @@
                         @endif
                         <div class="row">
                             <div class="col-md-9 personal-info">
-                                 <form action="{{ route('book.store') }}" method="POST" name="user_product">
+                                 <form action="{{ route('books.store') }}" method="POST" name="user_product">
                                     @csrf
                                     <div class="form-group">
                                         <label class="col-lg-3 control-label">{{ trans('page.bn') }}</label>

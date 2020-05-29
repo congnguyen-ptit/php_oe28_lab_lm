@@ -4,46 +4,42 @@
 
 @section('content')
     <div class="content-wrapper">
-        <div class="container">
-            <br>
-            <br>
-            <div class="banner-header">
-                <h1 class="btn btn-primary">{{ trans('page.add') }}</h1>
+        <section class="content-header">
+            <h1>
+                {{ trans('page.add') }}
+            </h1>
+        </section>
+        <section class="content">
+        <div class="row">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                </div>
+                <form role="form" action="" data-url="{{ route('publisher.store') }}" method="POST" id="addPubForm">
+                    @csrf
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label>{{ trans('page.n') }}</label>
+                            <input type="text" class="form-control" name="name">
+                            <div class="form-group has-error">
+                                <span class="help-block" id="name_error"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>{{ trans('page.location') }}</label>
+                            <input type="text" class="form-control" name="location">
+                            <div class="form-group has-error">
+                                <span class="help-block" id="location_error"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <button class="btn-warning btn" name="submit" type="submit">{{ trans('page.con') }}
+                        </button>
+                        <a href="{{ route('publisher.all') }}"><button type="submit" class="btn btn-primary">{{ trans('page.cancel') }}</button></a>
+                    </div>
+                </form>
             </div>
-            <br>
-            <br>
-            <form action="{{ route('publisher.store') }}" method="POST" name="user_product">
-                @csrf
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <span class="badge badge-light"><h4>{{ trans('page.n') }}</h4></span>
-                        <input type="text" class="form-control" name="name" required>
-                    </div>
-                    @error('name')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <span class="badge badge-light"><h4>{{ trans('page.location') }}</h4></span>
-                        <input type="text" class="form-control" name="location" required>
-                    </div>
-                    @error('location')
-                        <span class="invalid-feedback" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-                </div>
-                <p class="form-submit">
-                    <button class="btn-primary btn" name="submit" type="submit">{{ trans('page.con') }}</button>
-                </p>
-            </form>
-            <br>
-            <a href="{{ route('publisher.all') }}"><button type="submit" class="btn btn-primary">{{ trans('page.cancel') }}</button></a>
         </div>
-        <br>
-        <br>
-    </div>
+    </section>
+</div>
 @endsection

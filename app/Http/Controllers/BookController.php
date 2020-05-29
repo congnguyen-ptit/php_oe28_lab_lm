@@ -58,7 +58,10 @@ class BookController extends Controller
         ];
         $this->bookRepo->create($data);
 
-        return redirect()->back()->with('cu', trans('page.cu'));
+        return response()->json([
+            'success' => trans('page.createsucccessfully'),
+            'redirect' => route('book.list'),
+        ]);
     }
 
     public function show($id)
@@ -79,7 +82,11 @@ class BookController extends Controller
         try {
             $this->bookRepo->update($id, $data);
 
-            return redirect()->back()->with('success', trans('page.su'));
+            return response()->json([
+                'success' => trans('page.su'),
+                'redirect' => route('book.list'),
+                'image' => $data['image'],
+            ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
@@ -92,7 +99,10 @@ class BookController extends Controller
         try {
             $this->bookRepo->destroy($id);
 
-            return redirect()->route('book.list');
+            return response()->json([
+                'success' => trans('page.deleted'),
+                'redirect' => route('book.list'),
+            ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
@@ -140,11 +150,17 @@ class BookController extends Controller
     {
         $book = $this->bookRepo->findById($id);
         $this->bookRepo->likeBook($id, Auth::id());
-
-        return response()->json([
-            'liked' => trans('page.liked'),
-            'book' => $book,
-        ], 200);
+        if (Auth::check()) {
+            return response()->json([
+                'liked' => trans('page.liked'),
+                'book' => $book,
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'redirect' => route('login'),
+            ]);
+        }
     }
 
     public function showByCategory($slug)

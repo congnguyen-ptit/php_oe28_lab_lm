@@ -32,8 +32,7 @@
                                         @else
                                             <a href="{{ route('user.account', Auth::id()) }}"><i class="fa fa-lock"></i>{{ Auth::user()->name }}</a>
                                             <span>&#47;</span>
-                                            <a href="{{ route('logout') }}">{{ trans('page.logout') }}
-                                            </a>
+                                            <a href="#" data-url="{{ route('logout') }}" id="logout">{{ trans('page.logout') }}</a>
                                             <span>&#124;</span>
                                         @endguest
                                         <div class="header-cart dropdown">
@@ -55,8 +54,7 @@
                                                                     <strong>{{ trans('page.author') }}&#58;</strong>{{ $item['author'] }}
                                                                 </div>
                                                             </div>
-                                                            <input type="hidden" id="book_id" value="{{ $item['id'] }}">
-                                                            <a class="remove" href="#" id="removebook">
+                                                            <a  href="{{ route('bookbag.remove', $item['id'] ) }}" class="remove removebook">
                                                                 <i class="fa fa-trash-o"></i>
                                                             </a>
                                                         </li>

@@ -179,4 +179,17 @@ return [
     'followed' => 'Followed',
     'unfollowed' => 'Unfollowed',
     'x' => 'x',
+    'deleted' => 'Deleted!',
+    'mail.success' => 'Your book request is approved!',
+    'mail.header' => 'There are informations about your request',
+    'mail.thanks' => 'Thanks',
+    'admin.header' => 'Report to admin',
+    'admin.book' => 'Number of borrowed books',
+    'name.existed' => 'The name is already existed. Please try another name!',
+    'username.existed' => 'The username is already existed. Please try another name!',
+    'email.existed' => 'The email is already existed. Please try another name!',
+    'registered' => 'Success! You have been registered!',
+    'sendrequest' => 'send a request!',
+    'notifications' => 'Notifications',
+
 ];

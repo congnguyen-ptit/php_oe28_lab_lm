@@ -6,15 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Requests\BookRequest;
 use App\Http\Requests\CategoryRequest;
 use App\Http\Requests\PublisherRequest;
-use App\Http\Models\User;
-use App\Http\Models\Book;
-use App\Http\Models\Role;
 use App\Http\Models\Permission;
+
 use App\Http\Models\Comment;
-use App\Http\Models\Publisher;
-use App\Http\Models\Location;
-use App\Http\Models\Category;
-use App\Http\Models\BorrowerRecord;
 use App\Enums\UserRole;
 use Illuminate\Support\Facades\View;
 use Yajra\DataTables\Facades\DataTables;
@@ -23,22 +17,73 @@ use App\Enums\Status;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\RoleRequest;
 use Illuminate\Support\Facades\Hash;
+use App\Repositories\Category\CategoryRepoInterface;
+use App\Repositories\Publisher\PublisherRepoInterface;
+use App\Repositories\Book\BookRepoInterface;
+use App\Repositories\User\UserRepoInterface;
+use App\Repositories\BorrowerRecord\BorrowerRecordRepoInterface;
+use App\Repositories\Location\LocationRepoInterface;
+use App\Repositories\Role\RoleRepoInterface;
+use App\Repositories\Permission\PermissionRepoInterface;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotificationMail;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
-    public function __construct()
+    protected $categoryRepo;
+    protected $pubRepo;
+    protected $bookRepo;
+    protected $userRepo;
+    protected $brRepo;
+    protected $locationRepo;
+    protected $roleRepo;
+    protected $perRepo;
+
+    public function __construct(
+        CategoryRepoInterface $categoryRepo,
+        PublisherRepoInterface $pubRepo,
+        BookRepoInterface $bookRepo,
+        UserRepoInterface $userRepo,
+        BorrowerRecordRepoInterface $brRepo,
+        LocationRepoInterface $locationRepo,
+        RoleRepoInterface $roleRepo,
+        PermissionRepoInterface $perRepo
+    )
     {
         $this->middleware(['auth', 'admin']);
-        $users = User::where('role_id', '<', UserRole::Administrator)->get();
-        $latest_books = Book::orderBy('created_at', 'DESC')->get();
-        $roles = Role::all();
-        $borrower_records = BorrowerRecord::all();
-        $request = BorrowerRecord::where('status', Status::Request);
-        $borrowed = BorrowerRecord::where('status', Status::Borrowed);
-        $returned = BorrowerRecord::where('status', Status::Returned);
-        $rejected = BorrowerRecord::where('status', Status::Reject);
-        $categories = Category::all();
-        $permissions = Permission::all();
+        $this->categoryRepo = $categoryRepo;
+        $this->pubRepo = $pubRepo;
+        $this->bookRepo = $bookRepo;
+        $this->userRepo = $userRepo;
+        $this->brRepo = $brRepo;
+        $this->locationRepo = $locationRepo;
+        $this->roleRepo = $roleRepo;
+        $this->perRepo = $perRepo;
+        $users = $this->userRepo->getLatestUsers();
+        $latest_books = $this->bookRepo->getLatestBook();
+        $roles = $this->roleRepo->getAll();
+        $borrower_records = $this->brRepo->getAll();
+        $data = [
+            'request' => [
+                'status' => Status::Request,
+            ],
+            'borrowed' => [
+                'status' => Status::Borrowed,
+            ],
+            'returned' => [
+                'status' => Status::Returned,
+            ],
+            'rejected' => [
+                'status' => Status::Reject,
+            ],
+        ];
+        $request = $this->brRepo->findByAttr($data['request']);
+        $borrowed = $this->brRepo->findByAttr($data['borrowed']);
+        $returned = $this->brRepo->findByAttr($data['returned']);
+        $rejected = $this->brRepo->findByAttr($data['rejected']);
+        $categories = $this->categoryRepo->getAllPaginate(config('const.getAll'));
+        $permissions = $this->perRepo->getAllPaginate(config('const.getAll'));
         View::share([
             'users' => $users,
             'borrower_records' => $borrower_records,
@@ -60,74 +105,31 @@ class AdminController extends Controller
 
     public function showAll()
     {
-        return view('admin.pages.users');
+        $users = $this->userRepo->getAllPaginate(config('const.getAll'));
+
+        return view('admin.pages.users',[
+            'title' => trans('page.members'),
+            'users' => $users,
+        ]);
     }
 
     public function showBooks()
     {
-        return view('admin.pages.books');
-    }
+        $books = $this->bookRepo->getAllPaginate(config('const.getAll'));
 
-    public function getData()
-    {
-        $users = User::where('role_id', '!=', UserRole::Administrator)
-            ->orderBy('created_at', 'DESC')
-            ->get();
-
-        return Datatables::of($users)
-            ->addColumn('location', function($user) {
-                foreach ($user->locations as $location) {
-                    return $location->apartment_number.','.$location->street;
-                }
-            })
-            ->addColumn('action', '
-                <a href="{{ route(\'user.edit\', $id) }}">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </a>&#124;
-                <form action="{{ route(\'user.delete\', $id) }}" method="POST">
-                    @csrf
-                    @method("DELETE")
-                    <button type="submit"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
-                </form>'
-            )
-            ->rawColumns(['action'])
-            ->make('true');
-    }
-
-    public function getBookDatas()
-    {
-        $books = Book::orderBy('created_at', 'DESC');
-
-        return Datatables::of($books)
-            ->addColumn('author', function($book) {
-                return $book->user->name;
-            })
-            ->addColumn('publisher', function($book) {
-                return $book->publisher->name;
-            })
-            ->addColumn('category', function($book) {
-                return $book->category->name;
-            })
-            ->addColumn('action', '
-                <a href="{{ route(\'book.edit\', $id) }}" data-toggle="tooltip">
-                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </a>&#124;
-                <form action="{{ route(\'book.delete\', $id) }}" method="POST">
-                    @csrf
-                    @method("DELETE")
-                    <button type="submit"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
-                </form>'
-            )
-            ->rawColumns(['action', 'author', 'publisher', 'category'])
-            ->make('true');
+        return view('admin.pages.books', [
+            'books' => $books,
+        ]);
     }
 
     public function edit($id)
     {
         try{
-            $user = User::findOrFail($id);
+            $user = $this->userRepo->findById($id);
 
-            return view('admin.pages.edituser', compact('user'));
+            return view('admin.pages.edituser', [
+                'user' => $user,
+            ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
@@ -135,18 +137,27 @@ class AdminController extends Controller
 
     public function delete($id)
     {
-        $user = User::find($id);
-        $user->delete();
+        try {
+            $this->userRepo->destroy($id);
 
-        return redirect()->route('user.list');
+            return response()->json([
+                'success' => trans('page.deleted'),
+                'redirect' => route('user.list'),
+            ]);
+        } catch (ModelNotFoundException $e) {
+            response()->view('errors.404_user_not_found', [], 404);
+        }
+
     }
 
     public function editBook($id)
     {
-        try{
-            $book = Book::findOrFail($id);
+        try {
+            $book = $this->bookRepo->findById($id);
 
-            return view('admin.pages.editbook', compact('book'));
+            return view('admin.pages.editbook', [
+                'book' => $book,
+            ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
@@ -159,87 +170,37 @@ class AdminController extends Controller
 
     public function showBorrowerRecord()
     {
-        return view('admin.pages.records');
-    }
 
-    public function getRecordData()
-    {
-        $borrower_records = BorrowerRecord::orderBy('created_at', 'DESC');
-
-        return Datatables::of($borrower_records)
-            ->addColumn('user', function($borrower_record) {
-                return $borrower_record->user->name;
-            })
-            ->addColumn('book', function($borrower_record) {
-                return $borrower_record->book->name;
-            })
-            ->addColumn('action', '
-                <a href="{{ route(\'record.detail\', $id) }}">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </a>'
-            )
-            ->editColumn('status', function($borrower_record) {
-                if ($borrower_record->status == Status::Request) {
-                    return "Requesting";
-                }
-                if ($borrower_record->status == Status::Borrowed) {
-                    return "Borrowed";
-                }
-                if ($borrower_record->status == Status::Returned) {
-                    return "Returned";
-                }
-                if ($borrower_record->status == Status::Reject) {
-                    return "Rejected";
-                }
-            })
-            ->rawColumns(['book', 'user', 'action'])
-            ->make('true');
+        $records = $this->brRepo->getAllPaginate(config('const.getAll'));
+        return view('admin.pages.records', [
+            'records' => $records,
+            'title' => trans('page.allrc')
+        ]);
     }
 
     public function showRequest()
     {
-        return view('admin.pages.requests');
-    }
+        $data = [
+            'status' => Status::Request,
+        ];
+        $records = $this->brRepo->findByAttrPaginate($data, config('const.getAll'));
 
-    public function getRequestData()
-    {
-        $borrower_records = BorrowerRecord::where('status', '=', Status::Request)
-            ->orderBy('created_at', 'DESC')
-            ->get();
-
-        return Datatables::of($borrower_records)
-            ->addColumn('user', function($borrower_record) {
-                return $borrower_record->user->name;
-            })
-            ->addColumn('book', function($borrower_record) {
-                return $borrower_record->book->name;
-            })
-            ->addColumn('action', '
-                <a href="{{ route(\'record.detail\', $id) }}">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </a>&#124;
-                <form action="{{ route(\'record.reject\', $id) }}" method="POST">
-                    @csrf
-                    @method("PATCH")
-                    <button type="submit"><i class="fa fa-ban" aria-hidden="true"></i></button>
-                </form>'
-            )
-            ->editColumn('status', function($borrower_record) {
-                if ($borrower_record->status == Status::Request) {
-                    return "Requesting";
-                }
-            })
-            ->rawColumns(['book', 'user', 'action'])
-            ->make('true');
+        return view('admin.pages.records',  [
+            'records' => $records,
+            'title' => trans('page.requesting'),
+        ]);
     }
 
     public function recordDetail($id)
     {
         try {
-            $borrower_record = BorrowerRecord::find($id);
-            $user = User::find($borrower_record->user_id);
+            $borrower_record = $this->brRepo->findById($id);
+            $user = $this->userRepo->findById($borrower_record->user_id);
 
-            return view('admin.pages.editrecord', compact('borrower_record', 'user'));
+            return view('admin.pages.editrecord', [
+                'borrower_record' => $borrower_record,
+                'user' => $user,
+            ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
@@ -252,14 +213,16 @@ class AdminController extends Controller
         $new_book = true;
         $borrowed_books = 0;
         $returned_books = 0;
-        $borrower_record = BorrowerRecord::find($id);
-        $user = User::find($borrower_record->user_id);
-        $availabe_message = '';
-        $min_message = '';
-        $new_book_message = '';
+        $borrower_record = $this->brRepo->findById($id);
+        $user = $this->userRepo->findById($borrower_record->user_id);
+
         if ($borrower_record->book->quantity == config('const.empty')) {
             $available = false;
-            $availabe_message = trans('page.am');
+            return json([
+                'available' => $availabe,
+                'am' => trans('page.am'),
+            ]);
+            exit();
         }
         foreach ($user->borrowerRecords as $record) {
             if ($record->status == Status::Borrowed) {
@@ -269,34 +232,40 @@ class AdminController extends Controller
                 $returned_books++;
             }
         }
-        $latest_book = BorrowerRecord::where([
-                'book_id' => $borrower_record->book_id,
-                'user_id' => $borrower_record->user_id,
-                'status' => Status::Borrowed
-            ])->first();
+        $data = [
+            'book_id' => $borrower_record->book_id,
+            'user_id' => $borrower_record->user_id,
+            'status' => Status::Borrowed,
+        ];
+        $latest_book = $this->brRepo->findFirst($data);
         if ($latest_book) {
             $new_book = false;
-            $new_book_message = trans('page.nm');
+            return response()->json([
+                'new_book' => $new_book,
+                'new_book_message' => trans('page.nm'),
+            ]);
+            exit();
         }
         $number_of_books = $borrowed_books - $returned_books;
         if ($number_of_books > Status::Maximum ) {
             $min = false;
-            $min_message = trans('page.mm');
+            return response()->json([
+                'min' => $min,
+                'min_message' => trans('page.nm'),
+            ]);
+            exit();
         }
-        if ($available && $new_book && $min) {
-            $book = Book::find($borrower_record->book_id);
-            $book->quantity = $book->quantity - Status::Unit;
-            $borrower_record->status = Status::Borrowed;
-            $borrower_record->save();
-            $book->borrowerRecords()->save($borrower_record);
-            $book->save();
 
-            return redirect()->route('record.list');
-        } else {
-            return redirect()->route('record.detail', $id)->with([
-                'am' => $availabe_message,
-                'mm' => $min_message,
-                'nm' => $new_book_message,
+        if ($available && $new_book && $min) {
+            $borrowed_record_data = [
+                'status' => Status::Borrowed,
+            ];
+            $this->brRepo->update($id, $borrowed_record_data);
+            $this->bookRepo->updateBorrow($borrower_record->book_id, Status::Unit, $borrower_record);
+            Mail::to($borrower_record->user->email)->send(new NotificationMail($borrower_record));
+
+            return response()->json([
+                'success' => trans('page.su'),
             ]);
         }
     }
@@ -304,11 +273,14 @@ class AdminController extends Controller
     public function rejectRequest($id)
     {
         try {
-            $borrower_record = BorrowerRecord::find($id);
-            $borrower_record->status = Status::Reject;
-            $borrower_record->save();
+            $data = [
+                'status' => Status::Reject,
+            ];
+            $this->brRepo->update($id, $data);
 
-            return redirect()->route('record.list');
+            return response()->json([
+                'success' => trans('page.su'),
+            ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
@@ -317,15 +289,17 @@ class AdminController extends Controller
     public function returnRequest($id)
     {
         try {
-            $borrower_record = BorrowerRecord::find($id);
-            $book = Book::find($borrower_record->book_id);
-            $book->quantity = $book->quantity + Status::Unit;
-            $borrower_record->status = Status::Returned;
-            $borrower_record->save();
-            $book->borrowerRecords()->save($borrower_record);
-            $book->save();
+            $data = [
+                'status' => Status::Returned,
+            ];
+            $this->brRepo->update($id, $data);
+            $borrower_record = $this->brRepo->findById($id);
+            $this->bookRepo->updateReturn($borrower_record->book_id, Status::Unit, $borrower_record);
 
-            return redirect()->route('record.list');
+
+            return response()->json([
+                'success' => trans('page.su'),
+            ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
@@ -333,161 +307,67 @@ class AdminController extends Controller
 
     public function showBorrowed()
     {
-        return view('admin.pages.borrowed');
-    }
+        $data =[
+            'status' => Status::Borrowed,
+        ];
+        $records = $this->brRepo->findByAttrPaginate($data, config('const.getAll'));
 
-    public function getBorrowedData()
-    {
-        $borrower_records = BorrowerRecord::where('status', '=', Status::Borrowed)
-            ->orderBy('created_at', 'DESC')
-            ->get();
-
-        return Datatables::of($borrower_records)
-            ->addColumn('user', function($borrower_record) {
-                return $borrower_record->user->name;
-            })
-            ->addColumn('book', function($borrower_record) {
-                return $borrower_record->book->name;
-            })
-            ->addColumn('action', '
-                <a href="{{ route(\'record.detail\', $id) }}">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </a>&#124;
-                <form action="{{ route(\'record.return\', $id) }}" method="POST">
-                    @csrf
-                    @method("PATCH")
-                    <button type="submit"><i class="fa fa-undo" aria-hidden="true"></i></button>
-                </form>'
-            )
-            ->editColumn('status', function($borrower_record) {
-                if ($borrower_record->status == Status::Borrowed) {
-                    return "Borrowed";
-                }
-            })
-            ->rawColumns(['book', 'user', 'action'])
-            ->make('true');
+        return view('admin.pages.records', [
+            'records' => $records,
+            'title' => trans('page.borrowed'),
+        ]);
     }
 
     public function showReturned()
     {
-        return view('admin.pages.returned');
-    }
+        $data =[
+            'status' => Status::Returned,
+        ];
+        $records = $this->brRepo->findByAttrPaginate($data, config('const.getAll'));
 
-    public function getReturnedData()
-    {
-        $borrower_records = BorrowerRecord::where('status', '=', Status::Returned)
-            ->orderBy('created_at', 'DESC')
-            ->get();
-
-        return Datatables::of($borrower_records)
-            ->addColumn('user', function($borrower_record) {
-                return $borrower_record->user->name;
-            })
-            ->addColumn('book', function($borrower_record) {
-                return $borrower_record->book->name;
-            })
-            ->addColumn('action', '
-                <a href="{{ route(\'record.detail\', $id) }}">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </a>'
-            )
-            ->editColumn('status', function($borrower_record) {
-                if ($borrower_record->status == Status::Returned) {
-                    return "Returned";
-                }
-            })
-            ->rawColumns(['book', 'user', 'action'])
-            ->make('true');
+        return view('admin.pages.records',  [
+            'records' => $records,
+            'title' => trans('page.returned'),
+        ]);
     }
 
     public function showAuthor()
     {
-        return view('admin.pages.authors');
-    }
+        $data = [
+            'role_id' => UserRole::Author,
+        ];
+        $users = $this->userRepo->findByAttrPaginate($data, config('const.getAll'));
 
-    public function getAuthorData()
-    {
-        $users = User::where('role_id', '=', UserRole::Author)->get();
-
-        return Datatables::of($users)
-            ->addColumn('location', function($user) {
-                foreach ($user->locations as $location) {
-                    return $location->apartment_number . ',' . $location->street;
-                }
-            })
-            ->addColumn('action', '
-                <a href="{{ route(\'user.edit\', $id) }}">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </a>&#124;
-                <form action="{{ route(\'user.delete\', $id) }}" method="POST">
-                    @csrf
-                    @method("DELETE")
-                    <button type="submit"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
-                </form>'
-            )
-            ->rawColumns(['action'])
-            ->make('true');
+        return view('admin.pages.users', [
+            'users' => $users,
+            'title' => trans('page.author'),
+        ]);
     }
 
     public function showReader()
     {
-        return view('admin.pages.readers');
-    }
+        $data = [
+            'role_id' => UserRole::User,
+        ];
+        $users = $this->userRepo->findByAttrPaginate($data, config('const.getAll'));
 
-    public function getReaderData()
-    {
-        $users = User::where('role_id', '=', UserRole::User)
-            ->orderBy('created_at', 'DESC')
-            ->get();
-
-        return Datatables::of($users)
-            ->addColumn('location', function($user) {
-                foreach ($user->locations as $location) {
-                    return $location->apartment_number.','.$location->street;
-                }
-            })
-            ->addColumn('action', '
-                <a href="{{ route(\'user.edit\', $id) }}">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </a>&#124;
-                <form action="{{ route(\'user.delete\', $id) }}" method="POST">
-                    @csrf
-                    @method("DELETE")
-                    <button type="submit"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
-                </form>'
-            )
-            ->rawColumns(['action'])
-            ->make('true');
+        return view('admin.pages.users', [
+            'users' => $users,
+            'title' => trans('page.user'),
+        ]);
     }
 
     public function showPublisher()
     {
-        return view('admin.pages.publishers');
-    }
+        $publishers = $this->pubRepo->getAllPaginate(config('const.getAll'));
 
-    public function getPublisherData()
-    {
-        $publishers = Publisher::orderBy('created_at', 'DESC');
-
-        return Datatables::of($publishers)
-            ->addColumn('action', '
-                <a href="{{ route(\'publisher.edit\', $id) }}">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </a>&#124;
-                <form action="{{ route(\'publisher.delete\', $id) }}" method="POST">
-                    @csrf
-                    @method("DELETE")
-                    <button type="submit"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
-                </form>'
-            )
-            ->rawColumns(['action'])
-            ->make('true');
+        return view('admin.pages.publishers', compact('publishers'));
     }
 
     public function editPublisher($id)
     {
         try {
-            $publisher = Publisher::find($id);
+            $publisher = $this->pubRepo->findById($id);
 
             return view('admin.pages.editpublishers', compact('publisher'));
         } catch (ModelNotFoundException $e) {
@@ -497,14 +377,14 @@ class AdminController extends Controller
 
     public function savePublisher(Request $request, $id)
     {
+        $data = $request->all();
         try {
-            $publisher = Publisher::find($id);
-            $publisher->name = $request->name;
-            $publisher->slug = Str::slug($request->name);
-            $publisher->location = $request->location;
-            $publisher->save();
+            $this->pubRepo->update($id, $data);
 
-            return redirect()->route('publisher.all')->with('success', trans('page.updatesuccessfully'));
+            return response()->json([
+                'success' => trans('page.su'),
+                'redirect' => route('publisher.list'),
+            ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
@@ -512,10 +392,16 @@ class AdminController extends Controller
 
     public function deletePublisher($id)
     {
-        $publisher = Publisher::find($id);
-        $publisher->delete();
+        try {
+            $this->pubRepo->destroy($id);
 
-        return redirect()->route('publisher.all');
+            return response()->json([
+                'success' => trans('page.deleted'),
+                'redirect' => route('publisher.list'),
+            ]);
+        } catch (ModelNotFoundException $e) {
+            response()->view('errors.404_user_not_found', [], 404);
+        }
     }
 
     public function createPublisher()
@@ -525,14 +411,19 @@ class AdminController extends Controller
 
     public function storePublisher(PublisherRequest $request)
     {
-        $publisher = Publisher::create([
+
+        $data = [
             'code' => Str::random(config('const.code')),
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'location' => $request->location,
-        ]);
+        ];
+        $this->pubRepo->create($data);
 
-        return redirect()->route('publisher.all')->with('createsucccessfully', trans('page.createsucccessfully'));
+        return response()->json([
+            'success' => trans('page.createsucccessfully'),
+            'redirect' => route('publisher.list'),
+        ]);
     }
 
     public function add()
@@ -542,60 +433,38 @@ class AdminController extends Controller
 
     public function storeUser(RegisterRequest $request)
     {
-        $datas = $request->all();
-        $new_user = User::create([
+        $userData = [
             'code' => Str::random(config('const.code')),
-            'name' => $datas['name'],
-            'user_slug' => Str::slug($datas['name']),
-            'email' => $datas['email'],
-            'phone_number' => $datas['phone_number'],
-            'username' => $datas['username'],
-            'password' => Hash::make($datas['password']),
-            'role_id' => $datas['role_id'],
-        ]);
-        $user = User::find($new_user->id);
-        $location = $user->locations()->create([
-            'apartment_number' => $datas['apartment_number'],
-            'street' => $datas['street'],
-            'ward' => $datas['ward'],
-            'district' => $datas['district'],
-            'city' => $datas['city'],
-            'user_id' => $user->id,
-        ]);
+            'name' => $request->name,
+            'user_slug' => Str::slug($request->name),
+            'email' => $request->email,
+            'phone_number' => $request->phone_number,
+            'username' => $request->username,
+            'password' => Hash::make($request->password),
+            'role_id' => $request->role_id,
+        ];
+        $new_user = $this->userRepo->create($userData);
+        $locationData = [
+            'apartment_number' => $request->apartment_number,
+            'street' => $request->street,
+            'ward' => $request->ward,
+            'district' => $request->district,
+            'city' => $request->city,
+            'user_id' => $new_user->id,
+        ];
+        $this->locationRepo->create($locationData);
 
-        return redirect()->route('user.list')->with('createsucccessfully', trans('page.createsucccessfully'));
+        return response()->json([
+            'success' => trans('page.createsucccessfully'),
+            'redirect' => route('user.list'),
+        ]);
     }
 
     public function showCategory()
     {
-        $categories = Category::all();
+        $categories = $this->categoryRepo->getAllPaginate(config('const.getAll'));
+
         return view('admin.pages.categories', compact('categories'));
-    }
-
-    public function getCategoryData()
-    {
-        $categories = Category::all();
-
-        return Datatables::of($categories)
-            ->addColumn('action', '
-                <a href="{{ route(\'category.edit\', $id) }}">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </a>&#124;
-                <form action="{{ route(\'category.delete\', $id) }}" method="POST">
-                    @csrf
-                    @method("DELETE")
-                    <button type="submit"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
-                </form>'
-            )
-            ->editColumn('parent_id', function($category) {
-                if ($category->parent_id == config('const.empty')) {
-                    return $category->name;
-                } else {
-                    return $category->parent->name;
-                }
-            })
-            ->rawColumns(['action'])
-            ->make('true');
     }
 
     public function createCategory()
@@ -605,44 +474,51 @@ class AdminController extends Controller
 
     public function storeCategory(CategoryRequest $request)
     {
-        $category = Category::create([
+        $data = [
             'name' => $request->name,
             'slug' => Str::slug($request->name),
             'description' =>$request->description,
             'parent_id' => $request->parent_id,
-        ]);
+        ];
+        $this->categoryRepo->create($data);
 
-        return redirect()->route('category.list')->with('createsucccessfully', trans('page.createsucccessfully'));
+        return response()->json([
+            'success' => trans('page.createsucccessfully'),
+            'redirect' => route('category.list'),
+        ]);
     }
 
     public function editCategory($id)
     {
-        $category = Category::find($id);
+        $category = $this->categoryRepo->findById($id);
 
         return view('admin.pages.editcategory', compact('category'));
     }
 
     public function saveCategory(Request $request, $id)
     {
-        $category = Category::find($id);
-        $category->name = $request->name;
-        $category->description = $request->description;
-        $category->parent_id = $request->parent_id;
-        $category->save();
+        $data = $request->all();
+        try {
+            $this->categoryRepo->update($id, $data);
 
-        return response()->json([
-            'success' => trans('page.su'),
-            'category' => $category,
-        ]);
+            return response()->json([
+                'success' => trans('page.su'),
+                'redirect' => route('category.list'),
+            ]);
+        } catch (ModelNotFoundException $e) {
+            response()->view('errors.404_user_not_found', [], 404);
+        }
     }
 
     public function deleteCategory($id)
     {
-        try{
-            $category = Category::find($id);
-            $category->delete();
+        try {
+            $this->categoryRepo->destroy($id);
 
-            return redirect()->route('category.list');
+            return response()->json([
+                'success' => trans('page.deleted'),
+                'redirect' => route('category.list'),
+            ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
@@ -650,34 +526,15 @@ class AdminController extends Controller
 
     public function showRejected()
     {
-        return view('admin.pages.rejects');
-    }
+        $data =[
+            'status' => Status::Reject,
+        ];
+        $records = $this->brRepo->findByAttrPaginate($data, config('const.getAll'));
 
-    public function getRejectedData()
-    {
-        $borrower_records = BorrowerRecord::where('status', '=', Status::Reject)
-            ->orderBy('created_at', 'DESC')
-            ->get();
-
-        return Datatables::of($borrower_records)
-            ->addColumn('user', function($borrower_record) {
-                return $borrower_record->user->name;
-            })
-            ->addColumn('book', function($borrower_record) {
-                return $borrower_record->book->name;
-            })
-            ->addColumn('action', '
-                <a href="{{ route(\'record.detail\', $id) }}">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </a>'
-            )
-            ->editColumn('status', function($borrower_record) {
-                if ($borrower_record->status == Status::Returned) {
-                    return "Rejected";
-                }
-            })
-            ->rawColumns(['book', 'user', 'action'])
-            ->make('true');
+        return view('admin.pages.records',  [
+            'records' => $records,
+            'title' => trans('page.rejected'),
+        ]);
     }
 
     public function showRoles()
@@ -685,24 +542,10 @@ class AdminController extends Controller
         return view('admin.pages.roles');
     }
 
-    public function getRolesData()
-    {
-        $roles = Role::all();
-
-        return Datatables::of($roles)
-            ->addColumn('action', '
-                <a href="{{ route(\'role.edit\', $id) }}">
-                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
-                </a>'
-            )
-            ->rawColumns(['action'])
-            ->make('true');
-    }
-
     public function editRole($id)
     {
-        try{
-            $role = Role::find($id);
+        try {
+            $role = $this->roleRepo->findById($id);
 
             return view('admin.pages.editrole', compact('role'));
         } catch (ModelNotFoundException $e) {
@@ -712,14 +555,16 @@ class AdminController extends Controller
 
     public function saveRole(RoleRequest $request, $id)
     {
-        try{
-            $role = Role::find($id);
+        $data = $request->all();
+        try {
+            $role = $this->roleRepo->findById($id);
             $this->authorize($role, 'update');
-            $role->name = $request->name;
-            $role->description = $request->description;
-            $role->permissions()->sync($request->permission_id);
+            $this->roleRepo->update($id, $data);
 
-            return redirect()->route('role.edit', $id)->with('success', trans('page.updatesuccessfully'));
+            return response()->json([
+                'success' => trans('page.su'),
+                'redirect' => route('role.list'),
+            ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
@@ -733,25 +578,95 @@ class AdminController extends Controller
     public function storeRole(RoleRequest $request)
     {
         $this->authorize(Role::class, 'create');
-        $role = Role::create([
+        $data = [
             'name' => $request->name,
             'description' => $request->description,
-        ]);
+        ];
+        $role = $this->roleRepo->create($data);
         $role->permissions()->sync($request->permission_id);
 
-        return redirect()->route('role.list')->with('createsucccessfully', trans('page.createsucccessfully'));
+        return response()->json([
+            'success' => trans('page.createsucccessfully'),
+            'redirect' => route('role.list'),
+        ]);
     }
 
     public function deleteRole($id)
     {
-        try{
-            $role = Role::find($id);
+        try {
+            $role = $this->roleRepo->findById($id);
             $role->permissions()->detach();
-            $role->delete();
+            $this->roleRepo->destroy($id);
 
-            return redirect()->route('role.list')->with('success', trans('page.updatesuccessfully'));
+            return response()->json([
+                'success' => trans('page.su'),
+                'redirect' => route('role.list'),
+            ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
+    }
+
+    public function checkCate(Request $request){
+        if (isset($request->name_check)) {
+            $data = [
+                'name' => $request->name,
+            ];
+            $categories = $this->categoryRepo->findByAttr($data);
+            if (count($categories) > config('const.empty') ) {
+                return response()->json([
+                    'existed' => true,
+                    'message' => trans('page.name.existed'),
+                ]);
+            } else {
+                return response()->json([
+                    'existed' => false,
+                ]);
+            }
+        }
+    }
+
+    public function checkRole(Request $request)
+    {
+        if (isset($request->name_check)) {
+            $data = [
+                'name' => $request->name,
+            ];
+            $roles = $this->roleRepo->findByAttr($data);
+            if (count($roles) > config('const.empty') ) {
+                return response()->json([
+                    'existed' => true,
+                    'message' => trans('page.name.existed'),
+                ]);
+            } else {
+                return response()->json([
+                    'existed' => false,
+                ]);
+            }
+        }
+    }
+
+    public function checkPublisher(Request $request)
+    {
+        if (isset($request->publisher_name_check)) {
+            $data = [
+                'name' => $request->name,
+            ];
+            $name = $this->pubRepo->findByAttr($data);
+            if (count($name) > config('const.empty') ) {
+                return response()->json([
+                    'existed' => true,
+                    'message' => trans('page.name.existed'),
+                ]);
+            } else {
+                return response()->json([
+                    'existed' => false,
+                ]);
+            }
+        }
+    }
+
+    public function markAsRead($id) {
+        Auth::user()->unreadNotifications->where('id', $id)->markAsRead();
     }
 }

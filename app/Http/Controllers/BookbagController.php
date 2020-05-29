@@ -36,7 +36,11 @@ class BookbagController extends Controller
             $borroweds = $this->borrowerRecordRepo->findByAttr($dataBorrowed);
         }
 
-        return view('user.pages.bookbag', compact('item', 'requestings', 'borroweds'));
+        return view('user.pages.bookbag', [
+            'item' => $item,
+            'requestings' => $requestings,
+            'borroweds' => $borroweds,
+        ]);
     }
 
     public function addBook($id)
@@ -55,6 +59,8 @@ class BookbagController extends Controller
                         'img' => $book->image,
                         'slug' => $book->slug,
                         'author' => $book->user->name,
+                        'price' => $book->price,
+                        'quantity' => 1,
                     ]
                 ];
                 session()->put('item', $item);
@@ -74,6 +80,8 @@ class BookbagController extends Controller
                 'img' => $book->image,
                 'slug' => $book->slug,
                 'author' => $book->user->name,
+                'price' => $book->price,
+                'quantity' => 1,
             ];
             session()->put('item', $item);
 
@@ -83,7 +91,6 @@ class BookbagController extends Controller
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
-
     }
 
     public function removeBook(Request $request, $id){

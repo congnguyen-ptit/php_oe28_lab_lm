@@ -19,4 +19,8 @@ interface RepositoryInterface
     public function searchByColumn($data = []);
 
     public function getAllPaginate($number);
+
+    public function findFirst($data = []);
+
+    public function findByAttrPaginate($data = [], $number);
 }
