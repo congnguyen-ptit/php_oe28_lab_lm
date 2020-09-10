@@ -34,6 +34,22 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\User\UserRepoInterface::class,
             \App\Repositories\User\UserRepository::class
         );
+        $this->app->singleton(
+            \App\Repositories\BorrowerRecord\BorrowerRecordRepoInterface::class,
+            \App\Repositories\BorrowerRecord\BorrowerRecordRepository::class
+        );
+        $this->app->singleton(
+            \App\Repositories\Location\LocationRepoInterface::class,
+            \App\Repositories\Location\LocationRepository::class
+        );
+        $this->app->singleton(
+            \App\Repositories\Role\RoleRepoInterface::class,
+            \App\Repositories\Role\RoleRepository::class
+        );
+        $this->app->singleton(
+            \App\Repositories\Permission\PermissionRepoInterface::class,
+            \App\Repositories\Permission\PermissionRepository::class
+        );
     }
 
     /**

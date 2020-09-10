@@ -18,6 +18,7 @@ class Book extends Model
         'publisher_id',
         'category_id',
         'user_id',
+        'price',
     ];
     public $timestamps = true;
 

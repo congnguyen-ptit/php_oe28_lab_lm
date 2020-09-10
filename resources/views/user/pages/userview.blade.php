@@ -60,9 +60,9 @@
                                         <div class="social-content">
                                             <div class="social-share">
                                                 <ul>
-                                                    <li><i class="fa fa-book" aria-hidden="true"></i> {{ $user->books->count() }}</li>
-                                                    <li><i class="fa fa-users" aria-hidden="true"></i> {{ $user->followed->count() }}</li>
-                                                    <li><i class="fa fa-binoculars" aria-hidden="true"></i> {{ $user->following->count() }}</li>
+                                                    <li><i class="fa fa-book" aria-hidden="true" title="Books"></i> {{ $user->books->count() }}</li>
+                                                    <li><i class="fa fa-users" aria-hidden="true" title="Followers"></i> {{ $user->followed->count() }}</li>
+                                                    <li><i class="fa fa-binoculars" aria-hidden="true" title="Following"></i> {{ $user->following->count() }}</li>
                                                 </ul>
                                             </div>
                                             <div class="social-media">
@@ -72,13 +72,13 @@
                                                         {{ $follow ?? '' }}
                                                         @if (!$follow)
                                                             <li>
-                                                                <a href="#" id="follow">
+                                                                <a href="{{ route('user.follow', $user->id) }}" id="follow" title="Follow">
                                                                     <i class="fa fa-user-plus" aria-hidden="true"></i>
                                                                 </a>
                                                             </li>
                                                         @else
                                                             <li>
-                                                                <a href="#" id="unfollow">
+                                                                <a href="{{ route('user.unfollow', $user->id) }}" id="unfollow" title="Unfollow">
                                                                     <i class="fa fa-minus-square" aria-hidden="true"></i>
                                                                 </a>
                                                             </li>

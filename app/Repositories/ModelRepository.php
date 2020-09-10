@@ -32,17 +32,7 @@ abstract class ModelRepository implements RepositoryInterface
         return $this->model->find($id);
     }
 
-    public function update($id, $data = [])
-    {
-        $result = $this->findById($id);
-        if ($result) {
-            $result->update($data);
-
-            return $result;
-        }
-
-        return false;
-    }
+    abstract public function update($id, $data = []);
 
     public function destroy($id)
     {
@@ -65,7 +55,7 @@ abstract class ModelRepository implements RepositoryInterface
 
     public function create($data = [])
     {
-        $this->getModel()->create($data);
+        return $this->model->create($data);
     }
 
     public function findByAttrGetOne($data = [])
@@ -89,6 +79,20 @@ abstract class ModelRepository implements RepositoryInterface
     public function getAllPaginate($number)
     {
         return $this->model->paginate($number);
+    }
+
+    public function findFirst($data = [])
+    {
+        $result = $this->model->where($data)->first();
+
+        return $result;
+    }
+
+    public function findByAttrPaginate($data = [], $number)
+    {
+        $result = $this->model->where($data)->paginate($number);
+
+        return $result;
     }
 }
 

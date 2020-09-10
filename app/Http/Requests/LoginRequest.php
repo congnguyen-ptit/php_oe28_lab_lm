@@ -28,13 +28,4 @@ class LoginRequest extends FormRequest
             'password' => 'required|min:4',
         ];
     }
-
-    public function messages()
-    {
-        return [
-            'username.required' => trans('message.usernamerequired'),
-            'password.required' => trans('message.passwordrequired'),
-            'password.min' => trans('message.passwordmin'),
-        ];
-    }
 }

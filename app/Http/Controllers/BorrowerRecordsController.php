@@ -4,51 +4,76 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Http\Models\User;
-use App\Http\Models\Book;
-use App\Http\Models\BorrowerRecord;
 use Illuminate\Support\Facades\Auth;
 use App\Enums\Status;
 use Carbon\Carbon;
+use App\Repositories\BorrowerRecord\BorrowerRecordRepoInterface;
+use App\Repositories\User\UserRepoInterface;
+use App\Notifications\RequestNotification;
+use App\Enums\UserRole;
+use App\Events\BookRequestEvent;
 
 class BorrowerRecordsController extends Controller
 {
+    protected $brRepo;
+    protected $userRepo;
+
+    function __construct(BorrowerRecordRepoInterface $brRepo, UserRepoInterface $userRepo)
+    {
+        $this->brRepo = $brRepo;
+        $this->userRepo = $userRepo;
+    }
+
     public function request(Request $request)
     {
         $datas = $request->all();
         if ($datas['start_date'] > $datas['end_date']) {
-            return redirect()->route('bookbag.index')->with([
-                'fail' => trans('page.date'),
+            return response()->json([
+                'message' => trans('page.date'),
+                'fail' => true,
             ]);
+            exit();
         }
         $start = Carbon::parse($datas['start_date']);
         $end = Carbon::parse($datas['end_date']);
         if ($end->diffInDays($start) > Status::Number) {
-            return redirect()->route('bookbag.index')->with([
+            return response()->json([
                 'over' => trans('page.over'),
+                'fail_over' => true,
             ]);
+            exit();
         }
-
         $books = session()->get('item');
         foreach ($books as $key => $value) {
-            $borrower_record = BorrowerRecord::create([
+            $insert_data = [
                 'book_id' => $value['id'],
                 'user_id' => Auth::id(),
                 'start_date' => $datas['start_date'],
                 'end_date' => $datas['end_date'],
                 'status' => config('const.request'),
-            ]);
+            ];
+            $borrower_record = $this->brRepo->create($insert_data);
+            $administrator_data = [
+                'role_id' => UserRole::Administrator,
+            ];
+            $admins = $this->userRepo->findByAttr($administrator_data);
+            foreach ($admins as $admin) {
+                $admin->notify(new RequestNotification($borrower_record->id, Auth::user()->name));
+                event(new BookRequestEvent(Auth::user()->name . ' ' . trans('page.sendrequest'), $borrower_record->id));
+            }
         }
         session()->forget('item');
 
-        return redirect()->route('home');
+        return response()->json([
+            'success' => true,
+            'message' => 'ok',
+        ]);
     }
 
     public function recordDelete($id)
     {
         try {
-            $borrower_record = BorrowerRecord::find($id);
-            $borrower_record->delete();
+            $this->brRepo->delete($id);
 
             return redirect()->back();
         } catch (ModelNotFoundException $e) {

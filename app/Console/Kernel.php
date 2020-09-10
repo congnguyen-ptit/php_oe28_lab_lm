@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        'App\Console\Commands\SendToAdmin',
     ];
 
     /**
@@ -24,7 +24,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        //$schedule->command('sendToAdmin')->weeklyOn(0, 16);
+        // $schedule->command('sendToAdmin')->weeklyOn(4, 10:53);
     }
 
     /**

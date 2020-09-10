@@ -8,8 +8,6 @@ interface RepositoryInterface
 
     public function findById($id);
 
-    public function update($id, $data = []);
-
     public function destroy($id);
 
     public function findByAttr($data = []);
@@ -21,4 +19,8 @@ interface RepositoryInterface
     public function searchByColumn($data = []);
 
     public function getAllPaginate($number);
+
+    public function findFirst($data = []);
+
+    public function findByAttrPaginate($data = [], $number);
 }

@@ -86,22 +86,49 @@
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li><a href="{{ route('category.list', 'all') }}"><i class="fa fa-circle-o"></i> {{ trans('page.showall') }}</a></li>
-                    <li><a href="{{ route('category.add', 'all') }}"><i class="fa fa-circle-o"></i> {{ trans('page.add') }}</a></li>
+                    <li><a href="{{ route('category.list') }}"><i class="fa fa-circle-o"></i> {{ trans('page.showall') }}</a></li>
+                    <li><a href="{{ route('category.add') }}"><i class="fa fa-circle-o"></i> {{ trans('page.add') }}</a></li>
                 </ul>
             </li>
             <li class="treeview">
                 <a href="#">
                     <i class="fa fa-share"></i> <span>{{ trans('page.bookrequests') }}</span>
                     <span class="pull-right-container">
-                        <i class="fa fa-angle-left pull-right"></i>
+                        <small class="label pull-right bg-green">new</small>
                     </span>
                 </a>
                 <ul class="treeview-menu">
-                    <li><a href="{{ route('record.list') }}"><i class="fa fa-circle-o"></i> {{ trans('page.allrc') }}</a></li>
-                    <li><a href="{{ route('record.request') }}"><i class="fa fa-circle-o"></i> {{ trans('page.request') }}</a></li>
-                    <li><a href="{{ route('record.borrowed') }}"><i class="fa fa-circle-o"></i> {{ trans('page.borrowed') }}</a></li>
-                    <li><a href="{{ route('record.returned') }}"><i class="fa fa-circle-o"></i> {{ trans('page.returned') }}</a></li>
+                    <li>
+                        <a href="{{ route('record.list') }}">
+                            <i class="fa fa-circle-o"></i> {{ trans('page.allrc') }}
+                        </a>
+                        <span class="pull-right-container">
+                            <small class="label pull-right bg-yellow">{{ $request->count() }}</small>
+                        </span>
+                    </li>
+                    <li>
+                        <a href="{{ route('record.request') }}">
+                            <i class="fa fa-circle-o"></i> {{ trans('page.request') }}
+                        </a>
+                        <span class="pull-right-container">
+                            <small class="label pull-right bg-blue">{{ $borrowed->count() }}</small>
+                        </span>
+                    </li>
+                    <li>
+                        <a href="{{ route('record.borrowed') }}">
+                            <i class="fa fa-circle-o"></i> {{ trans('page.borrowed') }}
+                        </a>
+                        <span class="pull-right-container">
+                            <small class="label pull-right bg-green">{{ $returned->count() }}</small>
+                        </span>
+                    </li>
+                    <li>
+                        <a href="{{ route('record.returned') }}">
+                            <i class="fa fa-circle-o"></i> {{ trans('page.returned') }}
+                        </a>
+                        <span class="pull-right-container">
+                            <small class="label pull-right bg-red">{{ $rejected->count() }}</small>
+                        </span>
                     <li><a href="{{ route('record.rejected') }}"><i class="fa fa-circle-o"></i> {{ trans('page.rejected') }}</a></li>
                 </ul>
             </li>

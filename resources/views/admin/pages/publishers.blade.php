@@ -4,17 +4,17 @@
 
 @section('content')
 <div class="content-wrapper">
+    <section class="content-header">
+        <h1>
+            {{ trans('page.publishers') }}
+        </h1>
+    </section>
     <div class="container">
-        <br>
-        @if (session('createsucccessfully'))
-            <span class="label label-success">{{ session('createsucccessfully') }}</span>
-        @endif
-        <br>
         <div class="table-wrapper">
-            <table id="publishers-table" class="table table-striped " cellspacing="0" width="100%">
+            <table class="table table-striped " cellspacing="0" width="100%">
                 <thead>
                     <tr>
-                        <th class="th-sm">{{ trans('page.code') }}
+                        <th class="th-sm">&#35;
                         </th>
                         <th class="th-sm">{{ trans('page.name') }}
                         </th>
@@ -29,8 +29,26 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach($publishers as $key => $publisher)
+                    <tr>
+                        <td>{{ $key + 1 }}</td>
+                        <td>{{ $publisher->name }}</td>
+                        <td>{{ $publisher->location }}</td>
+                        <td>{{ $publisher->created_at }}</td>
+                        <td>{{ $publisher->updated_at }}</td>
+                        <td id="action">
+                            <a href="{{ route('publisher.edit', $publisher->id) }}" >
+                                <i class="material-icons" data-toggle="tooltip" title="Edit">&#xE254;</i>
+                            </a>
+                            <a href="#" data-url="{{ route('publisher.delete', $publisher->id) }}" class="delete">
+                                <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
+                            </a>
+                        </td>
+                    </tr>
+                    @endforeach
                 </tbody>
             </table>
+            {{ $publishers->links() }}
         </div>
     </div>
 </div>

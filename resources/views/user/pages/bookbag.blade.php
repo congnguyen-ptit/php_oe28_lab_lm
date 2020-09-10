@@ -48,7 +48,7 @@
                                         </ul>
                                         <div class="tab-content">
                                             <div id="sectionA" class="tab-pane fade in active">
-                                                <form method="POST" action="{{ route('user.request') }}">
+                                                <form method="POST" id="bookbag" data-url="{{ route('user.request') }}" action="">
                                                     @csrf
                                                     @auth
                                                         <span><strong>{{ trans('page.user') }}&#58;</strong> {{ Auth::user()->name }}</span>
@@ -92,6 +92,8 @@
                                                         <thead>
                                                             <tr>
                                                                 <th class="product-name">{{ trans('page.product') }}</th>
+                                                                <th>Price (VND)</th>
+                                                                <th>Quantity</th>
                                                                 <th class="product-subtotal"><button type="submit" class="btn btn-primary btn-sm" >{{ trans('page.request') }}</button></th>
                                                             </tr>
                                                         </thead>
@@ -107,6 +109,12 @@
                                                                             <a href="{{ route('book.detail', $value['slug']) }}"><strong>{{ $value['name'] }}</strong></a>
                                                                             <span><strong>{{ trans('page.author') }}&#58;</strong> {{ $value['author'] }}</span>
                                                                         </span>
+                                                                    </td>
+                                                                    <td class="product-remove">
+                                                                        <strong>{{ $value['price'] }}</strong>
+                                                                    </td>
+                                                                    <td class="product-remove">
+                                                                        <strong>{{ $value['quantity'] }}</strong>
                                                                     </td>
                                                                     <td class="product-remove">
                                                                         <a class="remove" href="{{ route('bookbag.remove', $value['id']) }}">

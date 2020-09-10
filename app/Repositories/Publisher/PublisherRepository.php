@@ -5,6 +5,7 @@ namespace App\Repositories\Publisher;
 use App\Repositories\ModelRepository;
 use App\Http\Models\Publisher;
 use App\Http\Models\Book;
+use Illuminate\Support\Str;
 
 class PublisherRepository extends ModelRepository implements PublisherRepoInterface
 {
@@ -23,5 +24,14 @@ class PublisherRepository extends ModelRepository implements PublisherRepoInterf
             ->orderBy('name')->paginate(config('const.take'));
 
         return $books;
+    }
+
+    public function update($id, $data = [])
+    {
+        $publisher = $this->findById($id);
+        $publisher->name = $data['name'];
+        $publisher->slug = Str::slug($data['name']);
+        $publisher->location = $data['location'];
+        $publisher->save();
     }
 }

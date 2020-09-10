@@ -3,29 +3,32 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Models\User;
-use App\Http\Models\Category;
-use App\Http\Models\Location;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
+use App\Repositories\User\UserRepoInterface;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    protected $userRepo;
+
+    function __construct(
+        UserRepoInterface $userRepo
+    ) {
+        $this->userRepo = $userRepo;
+    }
     public function detail($slug)
     {
         try {
             $follow = false;
-            $user = User::where('user_slug', $slug)->firstOrFail();
+            $data = [
+                'user_slug' => $slug,
+            ];
+            $user = $this->userRepo->findByAttrGetOne($data);
             if (Auth::check()) {
-                $follow = $user->followed()->wherePivot('follower_id', Auth::id())->exists();
+                $follow = $this->userRepo->checkFollow($user, Auth::id());
             } else {
                 $follow = false;
             }
+
             return view('user.pages.userview')->with([
                 'user' => $user,
                 'follow' => $follow,
@@ -37,51 +40,42 @@ class UserController extends Controller
 
     public function follow($id)
     {
-        $user = User::find($id);
-        $user->followed()->attach(Auth::id());
+        $user = $this->userRepo->findById($id);
+        $this->userRepo->follow($id, Auth::id());
 
-        return redirect()->route('user.detail', $user->user_slug);
+        return response()->json([
+            'user' => $user,
+            'success' => trans('page.followed'),
+        ]);
     }
 
     public function unfollow($id)
     {
-        $user = User::find($id);
-        $user->followed()->detach(Auth::id());
+        $user = $this->userRepo->findById($id);
+        $this->userRepo->unfollow($id, Auth::id());
 
-        return redirect()->route('user.detail', $user->user_slug);
+        return response()->json([
+            'user' => $user,
+            'success' => trans('page.unfollowed'),
+        ]);
     }
 
     public function myAccount($id)
     {
-        $user = User::find($id);
+        $user = $this->userRepo->findById($id);
 
         return view('user.pages.myaccount', compact('user'));
     }
 
     public function update(Request $request, $id)
     {
-        $datas = $request->all();
-        try{
-            $user = User::findOrFail($id);
-            $user->name = $request->name;
-            $user->username = $request->username;
-            $user->user_slug = Str::slug($request->name);
-            $user->email = $request->email;
-            $user->phone_number = $request->phone_number;
-            $user->role_id = $request->role_id;
-            $locations = Location::where('user_id', $id)->get();
-            foreach ($locations as $key => $location) {
-                $location->apartment_number = $datas['apartment_number'][$key];
-                $location->street = $datas['street'][$key];
-                $location->ward = $datas['ward'][$key];
-                $location->district = $datas['district'][$key];
-                $location->city = $datas['city'][$key];
-                $location->save();
-                $user->locations()->save($location);
-            }
-            $user->save();
+        $data = $request->all();
+        try {
+            $this->userRepo->update($id, $data);
 
-            return redirect()->back()->with('success', trans('page.su'));
+            return response()->json([
+                'success' => trans('page.su'),
+            ]);
         } catch (ModelNotFoundException $e) {
             response()->view('errors.404_user_not_found', [], 404);
         }
@@ -90,5 +84,60 @@ class UserController extends Controller
     public function addBook()
     {
         return view('user.pages.addbook');
+    }
+
+    public function checkInput(Request $request)
+    {
+        if (isset($request->email_check)) {
+            $data = [
+                'email' => $request->email,
+            ];
+            $user_email = $this->userRepo->findByAttr($data);
+            if(count($user_email) > config('const.empty') ) {
+                return response()->json([
+                    'existed' => true,
+                    'message' => trans('page.email.existed'),
+                ]);
+            } else {
+                return response()->json([
+                    'existed' => false,
+                ]);
+            }
+            exit();
+        }
+        if (isset($request->phone_check)) {
+            $data = [
+                'phone_number' => $request->phone_number,
+            ];
+            $user_phone_number = $this->userRepo->findByAttr($data);
+            if(count($user_phone_number) > config('const.empty') ) {
+                return response()->json([
+                    'existed' => true,
+                    'message' => trans('page.username.existed'),
+                ]);
+            } else {
+                return response()->json([
+                    'existed' => false,
+                ]);
+            }
+            exit();
+        }
+        if (isset($request->username_check)) {
+            $data = [
+                'username' => $request->username,
+            ];
+            $user_username = $this->userRepo->findByAttr($data);
+            if(count($user_username) > config('const.empty') ) {
+                return response()->json([
+                    'existed' => true,
+                    'message' => trans('page.username.existed'),
+                ]);
+            } else {
+                return response()->json([
+                    'existed' => false,
+                ]);
+            }
+            exit();
+        }
     }
 }

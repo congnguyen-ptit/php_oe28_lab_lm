@@ -9,4 +9,6 @@ return [
     'request' => '1',
     'borrowed' => '2',
     'returned' => '3',
+    'rejected' => '4',
+    'getAll' => '20',
 ];

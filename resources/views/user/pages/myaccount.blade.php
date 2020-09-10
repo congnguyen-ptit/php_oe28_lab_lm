@@ -50,9 +50,9 @@
                                 <h2><span class="label label-info">{{ trans('page.personal') }}</span></h2>
                                 <br>
                                 <br>
-                                <form class="form-horizontal" role="form" method="POST" action="{{ route('user.save', $user->id) }}">
+                                <form class="form-horizontal" role="form" action="" data-url="{{ route('user.save', $user->id) }}" id="editForm" method="POST">
                                     @csrf
-                                    @method("PATCH")
+                                    @method('PATCH')
                                     <div class="form-group">
                                         <label class="col-lg-3 control-label">{{ trans('page.name') }}</label>
                                         <div class="col-lg-8">
@@ -64,6 +64,14 @@
                                             @enderror
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <label class="col-lg-3 control-label">{{ trans('page.authority') }}</label>
+                                            <div class="col-lg-8">
+                                                <select name="role_id" class="form-control">
+                                                    <option value="{{ $user->role_id }}">{{ $user->role->name }}</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                     <div class="form-group">
                                         <label class="col-lg-3 control-label">{{ trans('page.username') }}</label>
                                         <div class="col-lg-8">
@@ -160,17 +168,20 @@
                                             </div>
                                         </div>
                                         @endforeach
+
+
                                     </div>
                                     <div class="form-group">
                                         <label class="col-md-3 control-label"></label>
                                         <div class="col-md-8">
-                                            <button type="submit" name="save" class="btn btn-primary" value="Save Changes">
-                                            <span><i class="fa fa-floppy-o" aria-hidden="true"></i></span></button>
+                                            <button type="submit" class="btn btn-primary">
+                                                <span><i class="fa fa-floppy-o" aria-hidden="true"></i></span>
+                                            </button>
                                         </div>
                                     </div>
                                 </form>
-                              </div>
-                          </div>
+                            </div>
+                        </div>
                     </div>
                     <hr>
                 </div>

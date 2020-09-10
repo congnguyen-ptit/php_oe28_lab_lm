@@ -40,7 +40,8 @@
     <script type="text/javascript" src="{{ asset('bower_components/bower_package/js/carousel.swipe.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bower_components/bower_package/js/bxslider.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bower_components/bower_package/js/main.js') }}"></script>
-    <script src="{{ asset('bower_components/bower_package/js/tables.js') }}"></script>
+    <script src="{{ asset('bower_components/bower_package/js/tables.js') }}"></script>.
+    <script src="{{ asset('bower_components/bower_package/js/crud.js') }}"></script>
     <script src="{{ asset('bower_components/bower_package/js/sweetalert.js') }}"></script>
 </body>
 </html>

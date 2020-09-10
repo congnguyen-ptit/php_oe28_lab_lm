@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use App\Repositories\User\UserRepoInterface;
+use App\Repositories\Location\LocationRepoInterface;
 
 class RegisterController extends Controller
 {
@@ -34,20 +36,27 @@ class RegisterController extends Controller
      * @var string
      */
     protected $redirectTo = RouteServiceProvider::HOME;
+    protected $locationRepo;
+    protected $userRepo;
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(
+        UserRepoInterface $userRepo,
+        LocationRepoInterface $locationRepo
+    )
     {
         $this->middleware('guest');
+        $this->userRepo = $userRepo;
+        $this->locationRepo = $locationRepo;
     }
 
     protected function create(array $data)
     {
-        $user = User::create([
+        $userData = [
             'code' => Str::random(config('const.code')),
             'name' => $data['name'],
             'user_slug' => Str::slug($data['name']),
@@ -55,16 +64,20 @@ class RegisterController extends Controller
             'phone_number' => $data['phone_number'],
             'username' => $data['username'],
             'password' => Hash::make($data['password']),
-            'role_id' => UserRole::User,
-        ]);
-        $location = Location::create([
+            'role_id' => $data['role_id'],
+            'is_vip' => 0,
+        ];
+        $user = $this->userRepo->create($userData);
+
+        $locationData = [
             'apartment_number' => $data['apartment_number'],
             'street' => $data['street'],
             'ward' => $data['ward'],
             'district' => $data['district'],
             'city' => $data['city'],
             'user_id' => $user->id,
-        ]);
+        ];
+        $location = $this->locationRepo->create($locationData);
 
         return $user;
     }
