@@ -47,6 +47,9 @@ class UserTest extends TestCase
             'username',
             'password',
             'role_id',
+            'provider',
+            'provider_id',
+            'is_vip'
         ], $this->user->getFillable()
         );
     }

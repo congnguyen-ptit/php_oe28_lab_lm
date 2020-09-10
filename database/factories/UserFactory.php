@@ -18,5 +18,7 @@ $factory->define(User::class, function (Faker $faker) {
         'role_id' => random_int(1, 3),
         'created_at' => new DateTime,
         'updated_at' => new DateTime,
+        'provider' => 1,
+        'provider_id' => 1,
     ];
 });

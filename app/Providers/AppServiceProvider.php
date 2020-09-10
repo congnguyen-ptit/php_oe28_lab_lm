@@ -59,17 +59,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $categories = Category::where('parent_id', '=', config('const.empty'))->get();
-        $child_categories = Category::where('parent_id', '>', config('const.empty'))->get();
-        $books = Book::all();
-        $authors = User::where('role_id', '=', config('const.author'))->get();
-        $publishers = Publisher::all();
-        View::share([
-            'categories' => $categories,
-            'child_categories' => $child_categories,
-            'books' => $books,
-            'authors' => $authors,
-            'publishers' => $publishers,
-        ]);
+//        $categories = Category::where('parent_id', '=', config('const.empty'))->get();
+//        $child_categories = Category::where('parent_id', '>', config('const.empty'))->get();
+//        $books = Book::all();
+//        $authors = User::where('role_id', '=', config('const.author'))->get();
+//        $publishers = Publisher::all();
+//        View::share([
+//            'categories' => $categories,
+//            'child_categories' => $child_categories,
+//            'books' => $books,
+//            'authors' => $authors,
+//            'publishers' => $publishers,
+//        ]);
     }
 }
